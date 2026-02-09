@@ -1,0 +1,2252 @@
+\documentclass[12pt,a4paper]{article}
+
+% =========================================================================
+% PACKAGES - FORMATTING
+% =========================================================================
+\usepackage[left=3cm, right=3cm, top=3cm, bottom=3cm]{geometry}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{threeparttable}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{longtable}
+
+% =========================================================================
+% PACKAGES - LISTS AND APPENDICES
+% =========================================================================
+\usepackage{enumitem}
+\usepackage[toc,page]{appendix}
+
+% =========================================================================
+% PACKAGES - CODE LISTINGS
+% =========================================================================
+\usepackage{listings}
+\usepackage{color}
+
+\lstdefinestyle{dynare}{%
+	language=Matlab,
+	basicstyle=\ttfamily\scriptsize,
+	numbers=left,
+	numberstyle=\tiny,
+	stepnumber=1,
+	numbersep=5pt,
+	frame=single,
+	breaklines=true,
+	captionpos=b
+}
+
+\lstdefinestyle{python}{%
+	language=Python,
+	basicstyle=\ttfamily\small,
+	numbers=left,
+	numberstyle=\tiny,
+	stepnumber=1,
+	numbersep=5pt,
+	frame=single,
+	breaklines=true,
+	captionpos=b
+}
+
+\lstdefinestyle{R}{%
+	language=R,
+	basicstyle=\ttfamily\footnotesize,
+	breaklines=true,
+	frame=single,
+	captionpos=b
+}
+
+% =========================================================================
+% PACKAGES - MATHEMATICS
+% =========================================================================
+\usepackage{amsmath,amsfonts,amssymb}
+
+% =========================================================================
+% PACKAGES - GRAPHICS
+% =========================================================================
+\usepackage{graphicx}
+\usepackage{subcaption}
+\graphicspath{{figures/}}
+
+% =========================================================================
+% PACKAGES - BIBLIOGRAPHY
+% =========================================================================
+\usepackage{natbib}
+\bibliographystyle{apalike}
+\usepackage[hidelinks]{hyperref}
+
+% =========================================================================
+% DOCUMENT FORMATTING
+% =========================================================================
+\renewcommand{\baselinestretch}{1.5}
+\sloppy
+
+% =========================================================================
+% HEADERS AND FOOTERS
+% =========================================================================
+\usepackage{fancyhdr}
+\setlength{\headheight}{14.5pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\nouppercase{\rightmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancypagestyle{plain}{%
+	\fancyhf{}
+	\fancyhead[R]{\nouppercase{\rightmark}}
+	\fancyfoot[C]{\thepage}
+	\renewcommand{\headrulewidth}{0.4pt}
+}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+
+% =========================================================================
+% DOCUMENT BEGIN
+% =========================================================================
+\begin{document}
+% =========================================================================
+% TITLE PAGE
+% =========================================================================
+\thispagestyle{empty}
+\vspace{1.0cm}
+\begin{center}
+	{\LARGE{Master thesis}}\\[0.6cm]
+	{\Large{Monetary Policy Transmission in Switzerland: \\
+			Exchange Rate and Inflation Responses to Rate Cuts, 2000--2025}}\\[1.5cm]
+	{\bf Master thesis}\\
+	at the\\[0.5cm]
+	{\bf Faculty of Economics}\\
+	{\bf University of Bern}\\[0.5cm]
+	Prof. Dr. Costanza Naguib\\[2.5cm]
+	
+	\hspace{1cm}\begin{minipage}[h]{12cm}
+		\begin{tabbing}
+			Student: \hspace{1cm} \= Jan Allemann \\[0.15cm]
+			Master: \> International and Monetary Economics \\[0.15cm]
+			Student-ID: \> 2020.060.927 \\[0.15cm]
+			Post address: \> Junkerngasse 50, 3011 Bern \\[0.15cm]
+			E-Mail: \> jan.allemann@students.unibe.ch \\[0.15cm]
+			Date: \> \today
+		\end{tabbing}
+	\end{minipage}
+\end{center}
+\newpage
+
+% =========================================================================
+% FRONT MATTER
+% =========================================================================
+\pagenumbering{roman}
+% Add this right before your \tableofcontents
+\begingroup
+\footnotesize
+\renewcommand{\baselinestretch}{0.85}
+\setcounter{tocdepth}{2}  % Only sections and subsections
+
+\newpage
+\thispagestyle{empty}
+
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+
+This thesis examines Swiss monetary policy transmission from 2000 to 2025 by comparing a Swiss-calibrated small open economy DSGE model with empirical evidence using purging regression identification and local projections. The analysis investigates how unexpected SNB rate cuts affect the EUR/CHF exchange rate and inflation across positive and negative interest rate regimes.
+
+Three main findings emerge. First, rate cuts depreciate the Swiss franc by 4.5\% per percentage point shock, confirming theoretical predictions but exceeding model magnitudes, suggesting stronger transmission during crisis episodes. Second, inflation shows weak pooled responses, validating New Keynesian mechanisms of incomplete pass-through and habit formation. Third, regime analysis reveals large inflation asymmetries during negative rates, though these reflect the extraordinary 2015 EUR/CHF floor removal rather than general negative-rate properties.
+
+The analysis faces fundamental identification constraints from monthly data frequency and limited negative-rate observations. Results should be interpreted as observed responses to policy surprises rather than fully structural causal effects.
+
+\vspace{0.5cm}
+\noindent\textbf{Keywords:} Monetary policy transmission, small open economy, DSGE model, exchange rate, inflation, negative interest rates, Switzerland
+
+\newpage
+
+\tableofcontents
+\newpage
+\listoffigures
+\listoftables
+\endgroup	
+
+\section*{List of Abbreviations}
+\begin{center}
+	\footnotesize
+	\begin{tabular}{@{}p{1.8cm}p{5.5cm}@{\hspace{0.8cm}}p{1.8cm}p{5.5cm}@{}}
+		\toprule
+		\multicolumn{4}{c}{\textbf{Abbreviations}} \\
+		\midrule
+		BFS & Federal Statistical Office & LP & Local Projections \\
+		BP & Basis Points & NK & New Keynesian \\
+		CATE & Conditional Average Treatment Effect & NKPC & New Keynesian Phillips Curve \\
+		CET & Central European Time & PP & Percentage Points \\
+		CHF & Swiss Franc & RF & Random Forest \\
+		CI & Confidence Interval & RMSE & Root Mean Squared Error \\
+		CPI & Consumer Price Index & RQ & Research Question \\
+		DML & Double Machine Learning & SARON & Swiss Average Rate Overnight \\
+		DSGE & Dynamic Stochastic General Equilibrium & SNB & Swiss National Bank \\
+		ELB & Effective Lower Bound & SOE & Small Open Economy \\
+		EUR/CHF & Euro/Swiss Franc Exchange Rate & SVAR & Structural Vector Autoregression \\
+		FOMC & Federal Open Market Committee & ToT & Terms of Trade \\
+		FX & Foreign Exchange & USD & US Dollar \\
+		HAC & Heteroskedasticity-Autocorrelation Consistent & VAR & Vector Autoregression \\
+		HFI & High-Frequency Identification & VIX & Volatility Index \\
+		IES & Intertemporal Elasticity of Substitution & ZLB & Zero Lower Bound \\
+		IRF & Impulse Response Function & & \\
+		IS & Investment-Saving Curve & & \\
+		KOF & KOF Economic Barometer & & \\
+		LIBOR & London Interbank Offered Rate & & \\
+		\bottomrule
+	\end{tabular}
+\end{center}
+
+\vspace*{\fill}
+
+\newpage
+\pagenumbering{arabic}
+\newpage
+
+% =========================================================================
+% SECTION 1: INTRODUCTION
+% =========================================================================
+\section{Introduction}
+\label{sec:intro}
+\subsection{Motivation and Problem Setting}
+\label{subsec:motivation}
+On March 20, 2025, the SNB lowered its policy rate by 25 bp to 0.25\% \citep{snb2025}. This cut was not entirely unexpected. Since March 2024, the SNB has been gradually lowering the policy rate. Furthermore, the decision was broadly expected by analysts, with news reports frequently discussing the possibility of additional cuts. When analyzing monetary policy transmission, expectations play a crucial role. Empirical research argues that mostly the unexpected component of policy actions should have a measurable impact in financial markets at the time of the rate change \citep{kuttner2001, gurkaynak2005}. In contrast, the expected component is often priced in for assets through central bank communication and forward guidance before the announcement \citep{campbell2012}. To isolate these policy surprises, high-frequency identification serves as a useful technique. This is done by analyzing price changes within short event windows of several minutes to one hour around announcements \citep{jarocinski2020, gurkaynak2005}. These short-term market moves show how markets react to new central bank information and help identify causal effects. 
+
+
+This behavior has become even more challenging after the Global Financial Crisis. Many advanced economies lowered interest rates to near zero, with several central banks implementing negative policy rates alongside forward guidance as unconventional policy tools \citep{rogoff2017, campbell2012}. This so-called “low-for-long” period \citep{inhoffen2021} may have altered classical monetary transmission channels and called into question the validity of standard identification strategies.
+
+
+Recent evidence from the euro area and Switzerland suggests that transmission may become state-dependent once policy rates turn negative. When rates are near zero or even fall below zero, certain channels, for example, those operating through banks, credit markets, and portfolio rebalancing, may weaken or behave nonlinearly compared to rate cuts from positive levels \citep{ecb2021, borio2017, baumann2025}. Understanding if and how monetary policy operates differently in a low- or negative-rate environment is therefore an important question for researchers and policymakers.
+
+\subsection{Swiss Context and Research Gap}
+\label{subsec:gap}
+Switzerland provides an ideal setting to study these issues and serves as an example of a SOE. In the NK framework of \citet{gali2005} and \citet{gali2008}, a SOE is modeled as one infinitesimally small member of a continuum of economies that together form the world economy. The SOE takes foreign output, inflation, and interest rates as exogenous. This implies that its domestic monetary decisions have no feedback effects abroad. In addition, such economies are characterized by trade openness, cross-border capital mobility, and explicit exchange-rate dynamics. Two interesting variables in such a SOE are the exchange rate and inflation. Their interaction is central to monetary transmission, as exchange-rate movements directly influence import prices and, in turn, domestic inflation.
+
+
+The Swiss franc is an example of a safe-haven currency. This kind of currency appreciates during periods of global uncertainty and exerts therefore downward pressure on domestic inflation \citep{ranaldo2010}. To reduce these forces, the SNB has implemented negative policy rates, first introduced in 2015, and has intervened in the FX market to limit excessive appreciation. Concerning inflation, the SNB has a mandate to ensure price stability, defined as annual CPI inflation below two percent, while taking broader economic conditions into account \citep{snb_strategy}. The long period of low and negative interest rates, together with the central role of the exchange rate and inflation target, makes Switzerland an interesting case study of monetary policy transmission.
+
+
+\subsection{Approach and Conceptual Framework}
+\label{subsec:approach}
+The thesis analyzes how unexpected SNB rate cuts affect financial markets and the real economy, and whether these effects depend on the interest-rate environment. The analysis is limited to rate cuts, which represent the SNB’s main tool to stimulate the economy. The period from 2000 to 2025 covers three major episodes of cuts, making it well suited for studying their effects. The research combines a theoretical DSGE framework with an empirical strategy based on shock identification via purging regressions, event studies and local projection estimation validation.
+
+On the theoretical side, a SOE DSGE model is constructed and calibrated to Swiss data. While the model follows the classical NK structure, it incorporates key Swiss-specific features, including exchange-rate dynamics and the persistent low or negative interest-rate environment documented by \citet{cuchecurti2009}, \citet{baurle2014}, and \citet{rudolf2014}. The model is simulated to obtain theoretical impulse responses to a rate cut, focusing on key variables such as the exchange rate and inflation.
+
+On the empirical side, the analysis proceeds in two steps. Due to limited availability of Swiss futures data across the full sample period (2000-2025), monetary policy shocks are identified using purging regressions that remove predictable components of SNB policy decisions based on lagged macroeconomic indicators. These identified shocks are then used to estimate dynamic responses through local projections and event studies around policy announcements. Machine learning methods provide data-driven control variable selection and robustness validation of the linear identification framework.
+
+By linking DSGE-based simulations with structurally identified and data-driven empirical estimates, this setup captures both the short-term financial adjustments and the longer-term macroeconomic impacts of monetary policy actions. The analysis first assesses the overall effects of rate cuts and then distinguishes between different interest-rate regimes to explore potential nonlinearities in transmission.
+Accordingly, the research questions of this thesis are formulated as follows:
+
+\begin{enumerate}[label=\textbf{RQ\arabic*:}, leftmargin=*, itemsep=0.4em, font=\normalfont]
+	\item What is the effect of an unexpected SNB rate cut on (i) the EUR/CHF exchange rate (high frequency) and (ii) Swiss inflation (low frequency) between 2000–2025?
+	\item Can the transmission mechanisms of a Swiss-calibrated SOE DSGE model be empirically validated using structural identification combined 
+	with machine-learning methods?
+\end{enumerate}
+
+% =========================================================================
+% SECTION 2: LITERATURE REVIEW
+% =========================================================================
+\section{Literature Review}
+\label{sec:lit}
+The literature on monetary policy transmission combines theoretical modeling and empirical identification to explain how policy shocks affect the broader economy.  
+
+
+This section reviews four main topics: (i) NK and SOE models that are the theoretical foundation of this thesis, (ii) the HFI literature used to isolate exogenous monetary policy shocks, (iii) the evidence on transmission channels and potential non-linearities in low-interest environments, and (iv) recent applications of econometric and machine learning methods for causal estimation and empirical validation.  
+
+\subsection{Theoretical Foundations: NK and SOE-DSGE Models}
+
+The NK framework provides the central analytical structure linking nominal rigidities, forward-looking expectations, and the transmission of monetary policy through the real interest rate \citep{clarida1999, woodford2003, gali2008}.
+
+It builds on three key components: an intertemporal IS curve based on households’ consumption and saving choices, a NK Phillips curve derived from Calvo-type price setting with gradual price adjustments, and a Taylor-type rule describing how central banks adjust nominal rates in response to inflation and output. Within this structure, monetary policy influences real activity mainly through its impact on real interest rates and expectations about future conditions. \citet{clarida1999} show that credible, rule-based frameworks can stabilize inflation and output, forming the foundation of modern inflation-targeting approaches. \citet{woodford2003} formalizes these mechanisms in a fully micro-founded, intertemporal model and emphasizes that managing expectations is more effective for policy transmission than directly controlling monetary aggregates.
+
+Building on this foundation, \citet{gali2008} presents a benchmark NK model for DSGE analysis, illustrating how monetary policy affects output and inflation through nominal and real rigidities. Chapter 7 extends the framework to a SOE by incorporating external trade, exchange-rate dynamics, and international linkages. A similar formulation of a SOE is developed by \citet{gali2005}, who explicitly model domestic and imported goods and analyze the welfare implications of alternative monetary-policy rules. They show that exchange-rate movements affect inflation both directly through import prices and indirectly via competitiveness effects on net exports. Their results indicate that domestic inflation targeting delivers higher welfare than CPI-based or exchange-rate-targeting regimes, though at the cost of greater exchange-rate volatility. These findings are particularly relevant for a SOE like Switzerland, where external trade and exchange-rate adjustments play a central role in monetary transmission.
+
+For Switzerland, the SNB’s DSGE research builds directly on these theoretical foundations. \citet{cuchecurti2009} introduce a macroeconomic model calibrated to Swiss data, while \citet{rudolf2014} develop a more compact SOE version suitable for policy simulations. Furthermore, \citet{baurle2014} extend the framework to include the ZLB and show that when nominal rates are constrained, exchange-rate and risk-premium shocks become more persistent. Their Bayesian VAR results confirm that the responses of exchange rates and prices to financial shocks are more persistent and amplified when the ZLB binds.
+
+% ====================================================
+\subsection{High-Frequency and Proxy-SVAR Identification}
+
+Identifying exogenous monetary policy shocks is challenging because central-bank decisions are often endogenous to anticipated economic developments.
+The HFI approach addresses this by focusing on the immediate market reactions to policy announcements, capturing the unexpected component of monetary decisions within narrow time windows around these events.
+
+\citet{kuttner2001} pioneered this method by analyzing 30-minute changes in federal-funds-futures rates around FOMC announcements to isolate policy surprises.
+\citet{gurkaynak2005} refined the approach by using both 30- and 60-minute event windows and decomposing futures-rate changes into two principal components that capture target-rate and forward-guidance shocks.
+Building on these foundations, \citet{campbell2012} applied similar high-frequency windows to measure market reactions to FOMC statements, showing that forward-guidance news can shift expectations and financial conditions even when the policy rate itself remains unchanged.
+
+Additional studies improved both the robustness and interpretation of these measures.
+\citet{lucca2015} document that U.S. equity prices tend to rise in the 24 hours preceding FOMC meetings, while \citet{kurov2021} show that this “pre-FOMC drift’’ has diminished as the Federal Reserve increased transparency.
+These findings suggest that part of the information is priced in before announcements, emphasizing the need for tight event windows and careful controls for anticipation effects.
+Furthermore, \citet{nakamura2018} use high-frequency futures data to identify unanticipated monetary tightenings and find significant real effects on output and inflation.
+
+However, asset-price reactions may not just reflect policy shocks but also information effects, where market responses to central-bank assessments of the economy.
+\citet{cieslak2019} show that monetary announcements often reveal both policy intentions and macroeconomic outlooks.
+To separate these components, \citet{jarocinski2020} analyze co-movements between stock prices and bond yields, while \citet{bauer2023} argue that much of this co-movement reflects the central bank’s reaction to public data rather than the disclosure of private information.
+These contributions motivate the integration of structural identification frameworks that can disentangle these channels more rigorously.
+
+One widely used empirical extension is the Proxy-SVAR approach, which links high-frequency monetary surprises to macroeconomic outcomes.
+\citet{miranda2019} develop this method using external instruments, such as futures-based surprises, to isolate exogenous shocks within VAR systems.
+\citet{gertler2015} and \citet{caldara2019} extend the framework by incorporating financial variables and credit spreads, showing that these amplify the real effects of monetary shocks.
+Moreover, \citet{swanson2012} demonstrate that medium- and long-term yields remain sensitive to monetary surprises even when short-term rates are constrained by the ZLB, confirming the robustness of the approach across regimes.
+
+While futures-based identification would be ideal, Swiss futures data are not available for the full 2000-2025 period. This thesis therefore uses purging regressions to identify policy surprises, combined with event studies and local projections to estimate dynamic responses.
+
+Finally, related studies analyze communication shocks using textual and speech-based indicators.
+\citet{jayawickrema2023} show that central-bank speeches can move yields even outside policy meetings, \citet{swanson2023} highlight their systematic effects, and \citet{kerssenfischer2024} identify which types of news most strongly influence expectations.
+Despite these advances, this thesis focuses on policy surprises identified through econometric methods rather than communication-based measures.
+
+% ====================================================
+\subsection{Monetary Transmission Channels and Low-Rate Environments}
+Understanding how monetary policy affects the broader economy requires analyzing its transmission channels, the mechanisms through which policy rate changes influence financial conditions, spending, and prices. In the NK framework, these channels operate primarily through interest rates, credit conditions, exchange rates, and expectations. When nominal rates are close to or below zero, their effectiveness may weaken or change character, making it essential to examine their functioning in such regimes.
+
+\citet{borio2017} show that as short-term rates approach zero, bank lending becomes less responsive due to compressed interest margins. Similar evidence for the euro area is presented by \citet{inhoffen2021} and \citet{europeanparliament2021}, who find that negative rates reduced bank profitability and influenced risk-taking incentives. These findings suggest that the traditional interest-rate and bank-lending channels may become less potent in a low-rate environment.
+
+While \citet{rogoff2017} interprets the ZLB primarily as a policy constraint, \citet{woodford2012} discusses complementary tools, such as forward guidance and large-scale asset purchases, that can help restore transmission when conventional rate cuts are limited. These instruments work mainly through the expectations and portfolio-rebalancing channels, influencing long-term yields and asset prices even when short-term rates are constrained.
+
+In a SOE like Switzerland, exchange-rate dynamics represent an additional and often dominant channel of monetary transmission. Empirical evidence and SNB publications \citep{snb2019, baumann2025} show that the SNB relied on tiered remuneration of reserves and foreign-exchange interventions to preserve monetary effectiveness under negative rates. Such measures helped mitigate appreciation pressures on the Swiss franc and maintain the impact of policy decisions on domestic inflation and output.
+
+% ====================================================
+\subsection{Machine-Learning for Causal Inference}
+Recent papers in econometrics and computer science have introduced machine learning methods for causal estimation in macro-finance.  
+\citet{chernozhukov2018} present the DML framework, which separates treatment and outcome equations to estimate structural effects in high-dimensional settings.  
+\citet{athey2017} illustrate how combining machine learning prediction techniques with causal inference approaches such as instrumental variables or difference-in-differences can improve policy evaluation and capture heterogeneous effects across agents.  
+Building on these ideas, \citet{ballinari2024} apply DML to dynamic macroeconomic environments and demonstrate how impulse responses can be estimated non-parametrically with valid inference. These approaches make it possible to combine theory-driven shocks (from DSGE or Proxy-SVAR models) with flexible, data-driven estimation methods, capturing potential non-linearities or regime dependencies that traditional linear models might miss.  
+
+This thesis applies Random Forest methods primarily for data-driven variable selection and Causal Forest techniques for examining treatment heterogeneity, complementing rather than replacing traditional linear identification methods. 
+
+% ====================================================
+\subsection{Summary and Positioning}
+The reviewed literature shows that NK and SOE-DSGE models provide a coherent theoretical basis for studying monetary transmission, while advances in identification and causal estimation improve empirical credibility. This thesis first simulates policy shocks in a Swiss-specific SOE DSGE model and then validates the results empirically using purging regression identification, event studies, local projections, and machine learning validation methods. This approach tests theoretical predictions against empirical evidence across different interest rate periods.
+
+% ====================================================
+\subsection{Structure of the Thesis}
+\label{subsec:structure}
+
+The thesis is structured as follows.  
+Section~\ref{sec:dsge} presents the DSGE model based on \citet{gali2008}, calibrated to Swiss data and simulated for negative monetary policy shocks.  
+Section \ref{sec:empirical} describes the empirical strategy, which identifies Swiss monetary surprises using purging regressions and estimates dynamic responses through local projections and event studies. Random Forest methods guide variable selection while regime analysis examines transmission differences across interest rate environments.
+Section~\ref{sec:discussion} compares the theoretical and empirical results, 
+evaluates findings against existing literature, discusses methodological 
+limitations, and answers the research questions. Finally, 
+Section~\ref{sec:conclusion} summarizes the key findings and highlights 
+policy implications.
+
+\newpage
+% =========================================================================
+% SECTION 3: THEORETICAL MODEL - CORRECTED TO MATCH DYNARE CODE
+% =========================================================================
+\section{Theoretical Model}
+\label{sec:dsge}
+
+This section develops a theoretical framework to analyze how unexpected SNB policy rate cuts affect the exchange rate and inflation. The model serves as a benchmark for interpreting the empirical findings in Section~\ref{sec:empirical}.
+
+The theoretical model is built up in four steps. First, the baseline follows \citet{gali2008}`s open-economy NK framework but is reduced to the core equations necessary for exchange rate and inflation dynamics.
+
+Second, six Swiss-specific extensions identified through empirical research are introduced: habit formation \citep{rudolf2014}, interest rate smoothing \citep{cuchecurti2009}, incomplete exchange rate pass-through \citep{cuchecurti2009}, exchange rate leaning in monetary policy \citep{cuchecurti2009}, price indexation \citep{gali2008}, and regime-dependent parameters \citep{baurle2014, baumann2025}. Each extension modifies baseline equations, and the analysis shows explicitly what an impact these modifications have on transmission mechanisms.
+
+Third, the complete equilibrium system combining all extensions is established and log-linearized around the zero-inflation steady state. Model parameters are calibrated to Swiss data, based on empirical estimates from the literature and matching key Swiss economic characteristics. 
+
+Fourth, the simulation results are presented through impulse response functions showing the dynamic effects of a 25 bp policy rate cut. The analysis examines transmission mechanisms and compares responses across the two policy regimes to assess whether monetary transmission differs systematically between positive and negative rate periods given the calibration.
+
+\newpage
+
+% -------------------------------------------------------------------------
+% SUBSECTION 3.1: MODEL STRUCTURE  
+% -------------------------------------------------------------------------
+\subsection{Model Structure}
+\label{subsec:model_structure}
+
+The baseline is developed in two steps. First, the full model from \citet{gali2008} Chapter 7 is replicated to establish the complete SOE framework. Second, this comprehensive system is reduced to three core behavioral equations: the Dynamic IS curve, the NKPC, and the Taylor rule, which govern the relationships between output gaps, inflation, and interest rates. This reduction guarantees that the transmission mechanisms for exchange rate and inflation dynamics still work while simplifying the model structure. Auxiliary equations define price aggregation, exchange rate dynamics, and shock processes. All equations are log-linearized around a zero-inflation steady state, with variables expressed as log-deviations from steady state ($\widehat{x}_t \equiv \log X_t - \log \bar{X}$) and gaps as deviations from flexible-price equilibrium ($\tilde{x}_t \equiv \widehat{x}_t - \widehat{x}_t^n$). Complete derivations are in Appendix~\ref{app:model_derivations}.
+
+% =========================================================================
+% CORE BEHAVIORAL EQUATIONS
+% =========================================================================
+
+\paragraph{Dynamic IS Curve.}
+A representative household maximizes lifetime utility over consumption and labor, choosing how much to consume today versus tomorrow. The household's Euler equation, which governs this intertemporal choice, combined with labor supply decisions and market clearing, yields the aggregate demand relation:
+\begin{equation}
+	\tilde{y}_t = E_t\tilde{y}_{t+1} - \frac{1}{\sigma_\upsilon}(i_t - E_t\pi_{H,t+1} - r_t^n),
+	\label{eq:IS_baseline}
+\end{equation}
+where $\tilde{y}_t$ is the output gap, $i_t$ the nominal interest rate, 
+$\pi_{H,t}$ domestic inflation, $r_t^n$ the natural real interest rate, 
+and $\sigma_\upsilon = \sigma\Phi$ is a composite parameter that adjusts 
+the inverse intertemporal elasticity of substitution ($\sigma$) for 
+open-economy effects (full derivation in Appendix~\ref{app:composite_params})
+
+The IS curve captures the demand channel of monetary transmission. When the central bank cuts the policy rate, the real interest rate $(i_t - E_t\pi_{H,t+1})$ falls below its natural level $r_t^n$. This makes saving less attractive and consumption today relatively cheaper than consumption tomorrow, stimulating current demand and raising the output gap. The coefficient $1/\sigma_\upsilon$ governs the strength of this response: higher intertemporal substitution elasticity amplifies the effect. Expected inflation enters as domestic inflation $E_t\pi_{H,t+1}$ rather than CPI inflation because households' consumption-saving decisions depend on the real return deflated by the price of domestically produced goods.
+
+\paragraph{New Keynesian Phillips Curve.}
+A continuum of monopolistically competitive firms produce differentiated goods using labor and face nominal rigidities in price setting. Following the Calvo mechanism, each period only a random fraction $1-\theta$ of firms can reoptimize their price, while the remaining fraction $\theta$ must keep prices unchanged. Firms that can adjust choose their reset price to maximize expected discounted profits, accounting for the possibility that this price may remain fixed for multiple periods. Aggregating across all firms and log-linearizing around the zero-inflation steady state yields:
+\begin{equation}
+	\pi_{H,t} = \beta E_t\pi_{H,t+1} + \kappa_\upsilon\tilde{y}_t,
+	\label{eq:NKPC_baseline}
+\end{equation}
+where the slope coefficient is:
+\begin{equation}
+	\kappa_\upsilon = \lambda\left(\sigma_\upsilon + \frac{\varphi+\alpha}{1-\alpha}\right), \quad \lambda = \frac{(1-\theta)(1-\beta\theta)}{\theta}\Omega, \quad \Omega = \frac{1-\alpha}{1-\alpha+\alpha\varepsilon},
+	\label{eq:kappa}
+\end{equation}
+with $\theta$ the Calvo parameter measuring price stickiness, $\beta$ the household's discount factor, $\varepsilon$ the elasticity of substitution between varieties, $\alpha$ the import share in production, and $\varphi$ the inverse Frisch elasticity of labor supply.
+
+The Phillips curve captures the supply-side inflation dynamics. When aggregate demand increases and the output gap becomes positive, firms must hire more labor to meet demand. This drives up real wages and firms' real marginal costs. Firms that can adjust prices respond by raising them, generating inflation. The forward-looking term $\beta E_t\pi_{H,t+1}$ reflects that firms setting prices today must consider future cost conditions, as their price may remain fixed for several periods. Greater price stickiness (higher $\theta$) flattens the Phillips curve: fewer firms adjust each period, weakening the inflation response to demand pressures.
+
+\paragraph{Taylor Rule.}
+The central bank sets the nominal policy rate according to a systematic rule responding to deviations of inflation and output from their targets:
+\begin{equation}
+	i_t = \phi_\pi \pi_{H,t} + \phi_y\tilde{y}_t + \nu_t,
+	\label{eq:Taylor_baseline}
+\end{equation}
+where $\phi_\pi > 1$ ensures determinacy (the Taylor principle: the central bank raises nominal rates more than one-for-one with inflation, ensuring real rates rise), $\phi_y \geq 0$ measures the response to output gaps, and $\nu_t$ is an exogenous monetary policy shock capturing deviations from the systematic rule.
+
+The rule shows how the central bank stabilizes the economy. When inflation rises above target, the central bank tightens policy ($i_t$ increases), raising real rates and dampening demand. The coefficient $\phi_\pi > 1$ is crucial: it ensures that when inflation rises by 1 pp, the nominal rate increases by more than 1 pp, making the real rate rise and stabilizing inflation expectations. The shock $\nu_t$ represents unexpected policy actions: positive $\nu_t$ is an unanticipated tightening, negative $\nu_t$ an unanticipated easing.
+
+% =========================================================================
+% AUXILIARY EQUATIONS
+% =========================================================================
+
+\paragraph{Auxiliary Equations.}
+The core behavioral equations are supplemented by identities and definitions that complete the open economy structure and link domestic variables to exchange rate dynamics.
+
+\textit{Terms of trade.} This equation (the relative price of imports to domestic goods) is determined by the resource constraint and optimal consumption allocation:
+\begin{equation}
+	s_t = \sigma_\upsilon\tilde{y}_t,
+	\label{eq:tot}
+\end{equation}
+where $s_t$ measures the log ToT. Higher domestic demand raises the output gap, which increases the ToT and corresponds to nominal depreciation.
+
+This is linked to the nominal exchange rate via the price definition:
+\begin{equation}
+	s_t = e_t - p_{H,t},
+	\label{eq:er_def}
+\end{equation}
+where $e_t = \log S_t$ is the log nominal exchange rate, with $S_t$ expressed in units of domestic currency per unit of foreign currency (an increase represents depreciation), and $p_{H,t} = \log P_{H,t}$ the log domestic price level. Together, equations~\eqref{eq:tot} and~\eqref{eq:er_def} establish the connection between output gaps and the exchange rate: expansionary policy raises output gaps, which increases the ToT, corresponding to nominal depreciation.
+
+
+\textit{CPI inflation.} It aggregates domestic goods inflation and the change in import prices:
+\begin{equation}
+	\pi_{C,t} = \pi_{H,t} + \upsilon(s_t - s_{t-1}),
+	\label{eq:CPI_baseline}
+\end{equation}
+where $\upsilon \in (0,1)$ is the openness parameter measuring the sensitivity of CPI inflation to ToT changes. CPI inflation thus reflects both domestic inflation and exchange rate pass-through via ToT changes.
+
+
+\textit{Natural real interest rate.} This rate is the real interest rate that would prevail under flexible prices:
+\begin{equation}
+	r_t^n = -\sigma_\upsilon\Gamma_a(1-\rho_a)a_t,
+	\label{eq:rnat}
+\end{equation}
+where $\Gamma_a = (1+\varphi)/[\sigma_\upsilon(1-\alpha)+\varphi+\alpha]$ and $a_t$ is the technology shock following $a_t = \rho_a a_{t-1} + \varepsilon_t^a$. Positive productivity shocks raise the natural rate, as higher future income makes households want to consume more today.
+
+\textit{Price dynamics and exchange rate.} Both domestic and consumer price levels accumulate inflation over time, evolving according to $p_{H,t} = p_{H,t-1} + \pi_{H,t}$ and $p_{C,t} = p_{C,t-1} + \pi_{C,t}$ respectively. The exchange rate change is $\Delta e_t = e_t - e_{t-1}$.
+
+\textit{Monetary policy shock.} The policy shock follows an AR(1) process:
+\begin{equation}
+	\nu_t = \rho_\nu\nu_{t-1} - \varepsilon_t^\nu, \qquad \varepsilon_t^\nu \sim N(0,\sigma_\nu^2).
+	\label{eq:shock}
+\end{equation}
+The negative sign on the innovation ensures that a positive draw $\varepsilon_t^\nu > 0$ produces a negative shock $\nu_t < 0$, which through equation~\eqref{eq:Taylor_baseline} represents an expansionary surprise (rate cut). This is implemented in that way because the shock enters through $\sigma_\nu$ and if this term is squared it would stay positive. Alternatively $\nu_t$ could have been set negative but the results would be the same.
+% -------------------------------------------------------------------------
+% SUBSECTION 3.2: SWISS-SPECIFIC EXTENSIONS
+% -------------------------------------------------------------------------
+\subsection{Swiss-Specific Extensions}
+\label{subsec:swiss_extensions}
+
+Six extensions modify baseline equations to capture Swiss characteristics. Each subsection presents the modified equation and explains the transmission mechanism.
+
+\subsubsection{Extension 1: Habit Formation}
+
+Swiss consumption exhibits strong persistence \citep{rudolf2014}, motivating a 
+modification to household utility: $U_t = [(C_t - hC_{t-1})^{1-\sigma} - 1]/(1-\sigma) - N_t^{1+\varphi}/(1+\varphi)$, where $h \in [0,1)$ captures the strength of habit formation. This modification changes the IS curve to:
+\begin{equation}
+	\boxed{\tilde{y}_t = E_t\tilde{y}_{t+1} - \frac{1-h}{\sigma_\upsilon}(i_t - E_t\pi_{H,t+1} - r_t^n)}
+	\label{eq:IS_habit}
+\end{equation}
+
+The key effect is that the interest rate sensitivity coefficient becomes 
+$(1-h)/\sigma_\upsilon$ instead of $1/\sigma_\upsilon$, meaning that higher values of $h$ imply stronger habit persistence and substantially dampen demand responses to rate changes.
+
+\subsubsection{Extension 2: Interest Rate Smoothing}
+
+The SNB adjusts rates gradually rather than implementing immediate changes 
+\citep{cuchecurti2009}, which is captured by modifying the Taylor rule to:
+\begin{equation}
+	\boxed{i_t = \rho_i i_{t-1} + (1-\rho_i)(\phi_\pi\pi_{H,t} + \phi_y\tilde{y}_t) + \nu_t}
+	\label{eq:Taylor_smooth}
+\end{equation}
+where $\rho_i \in [0,1)$ is the smoothing parameter. Higher values of $\rho_i$ 
+imply stronger persistence in the policy rate, extending the duration of policy shocks through forward-looking expectations as households anticipate gradual rather than immediate policy adjustments.
+
+\subsubsection{Extension 3: Incomplete Exchange Rate Pass-Through}
+
+Exchange rate changes transmit gradually to Swiss import prices rather than 
+instantaneously \citep{cuchecurti2009}. To capture this gradual transmission, 
+CPI inflation is modified to explicitly distinguish domestic and import components:
+\begin{equation}
+	\boxed{\pi_{C,t} = (1-\alpha_m)\pi_{H,t} + \alpha_m\pi_{M,t}}
+	\label{eq:CPI_incomplete}
+\end{equation}
+where $\alpha_m$ is the import share in CPI, and import price inflation follows:
+\begin{equation}
+	\boxed{\pi_{M,t} = \alpha_{\text{pass}}\Delta e_t + (1-\alpha_{\text{pass}})\pi_{M,t-1}}
+	\label{eq:import_incomplete}
+\end{equation}
+
+The pass-through coefficient $\alpha_{\text{pass}} \in (0,1]$ determines what 
+fraction of exchange rate changes immediately transmit to import prices, with 
+lower values implying that only a fraction passes through within one quarter while the remainder adjusts gradually. This substantially weakens the exchange rate channel's aggregate impact on consumer prices.
+
+\subsubsection{Extension 4: Exchange Rate Leaning}
+
+The SNB responds systematically to exchange rate movements \citep{cuchecurti2009}, which extends the Taylor rule to:
+\begin{equation}
+	\boxed{i_t = \rho_i i_{t-1} + (1-\rho_i)(\phi_\pi\pi_{C,t} + \phi_y\tilde{y}_t + \phi_{\Delta e}\Delta e_t) + \nu_t}
+	\label{eq:Taylor_FX}
+\end{equation}
+where $\phi_{\Delta e} \geq 0$ captures the strength of exchange rate leaning. 
+Note that with incomplete pass-through active, the rule responds to CPI inflation $\pi_{C,t}$ rather than domestic inflation $\pi_{H,t}$ since the central bank targets overall consumer price stability.
+
+Positive values of $\phi_{\Delta e}$ mean that depreciation triggers policy 
+tightening, creating stabilizing feedback loops: when depreciation occurs through output gap effects (via equations~\eqref{eq:tot},\eqref{eq:er_def}), it triggers tightening via equation~\eqref{eq:Taylor_FX}, which dampens output gaps and thereby limits further depreciation. Forward-looking agents anticipate this feedback loop, and if exchange rate leaning is sufficiently strong, a rate cut can paradoxically produce appreciation as the anticipated future tightening in response to depreciation dominates the initial expansionary impulse. This is the critical extension that can reverse the conventional exchange rate response.
+
+\subsubsection{Extension 5: Price Indexation}
+
+Of the fraction of firms that do not reoptimize their prices in a given period, a share $\gamma$ index them to past inflation \citep{gali2008}, which modifies the Phillips curve to:
+\begin{equation}
+	\boxed{\pi_{H,t} = \gamma\pi_{H,t-1} + (1-\gamma)\beta E_t\pi_{H,t+1} + \kappa_\upsilon\tilde{y}_t}
+	\label{eq:NKPC_index}
+\end{equation}
+
+The parameter $\gamma \in [0,1]$ determines the strength of the backward-looking component, with higher values adding more persistence to inflation dynamics and amplifying hump-shaped response patterns.
+
+\subsubsection{Extension 6: Regime-Dependent Parameters}
+
+Transmission may differ at the ELB \citep{baurle2014, baumann2025}. To implement this behavior Taylor rule coefficients are set differently:
+\begin{equation}
+	\{\phi_\pi, \phi_{\Delta e}\} = 
+	\begin{cases}
+		\{\phi_\pi^A, \phi_{\Delta e}^A\} & \text{Regime A: positive rates (2000--2014, 2024--2025)}, \\
+		\{\phi_\pi^B, \phi_{\Delta e}^B\} & \text{Regime B: negative rates (2015--2023)}.
+	\end{cases}
+	\label{eq:regime}
+\end{equation}
+The hypothesis is $\phi_\pi^A > \phi_\pi^B$ (weaker inflation response at the ELB) and $\phi_{\Delta e}^A < \phi_{\Delta e}^B$ (stronger leaning when conventional policy space is constrained). This is implemented by separately simulating the model with regime-specific parameter values.
+% -------------------------------------------------------------------------
+% SUBSECTION 3.3: EQUILIBRIUM AND LOG-LINEARIZATION
+% -------------------------------------------------------------------------
+\subsection{Complete Model System}
+\label{subsec:complete_system}
+The complete log-linearized system with all extensions comprises:
+
+\paragraph{Core Behavioral Equations.}
+\begin{align}
+	\tilde{y}_t &= E_t\tilde{y}_{t+1} - \frac{1-h}{\sigma_\upsilon}(i_t - E_t\pi_{H,t+1} - r_t^n), 
+	\label{eq:sys_IS} \tag{IS} \\
+	\pi_{H,t} &= \gamma\pi_{H,t-1} + (1-\gamma)\beta E_t\pi_{H,t+1} + \kappa_\upsilon\tilde{y}_t, 
+	\label{eq:sys_NKPC} \tag{NKPC} \\
+	i_t &= \rho_i i_{t-1} + (1-\rho_i)(\phi_\pi^R\pi_{C,t} + \phi_y\tilde{y}_t + \phi_{\Delta e}^R\Delta e_t) + \nu_t, 
+	\label{eq:sys_Taylor} \tag{Taylor} \\
+	\pi_{C,t} &= (1-\alpha_m)\pi_{H,t} + \alpha_m\pi_{M,t}, 
+	\label{eq:sys_CPI} \tag{CPI} \\
+	\pi_{M,t} &= \alpha_{\text{pass}}\Delta e_t + (1-\alpha_{\text{pass}})\pi_{M,t-1}, 
+	\label{eq:sys_import} \tag{Import} \\
+	s_t &= \sigma_\upsilon\tilde{y}_t, 
+	\label{eq:sys_tot} \tag{ToT} \\
+	s_t &= e_t - p_{H,t}, 
+	\label{eq:sys_er} \tag{ER def}
+\end{align}
+where $R \in \{A,B\}$ denotes regime.
+
+\paragraph{Exogenous Processes.}
+\begin{align}
+	r_t^n &= -\sigma_\upsilon\Gamma_a(1-\rho_a)a_t, \tag{Natural rate} \label{eq:sys_rnat} \\
+	a_t &= \rho_a a_{t-1} + \varepsilon_t^a, \tag{Technology} \label{eq:sys_a} \\
+	\nu_t &= \rho_\nu\nu_{t-1} - \varepsilon_t^\nu. \tag{Policy shock} \label{eq:sys_nu}
+\end{align}
+
+\paragraph{Auxiliary Equations.}
+\begin{align}
+	p_{H,t} &= p_{H,t-1} + \pi_{H,t}, \tag{Domestic prices} \label{eq:sys_pH} \\
+	p_{C,t} &= p_{C,t-1} + \pi_{C,t}, \tag{CPI} \label{eq:sys_pC} \\
+	\Delta e_t &= e_t - e_{t-1}. \tag{ER change} \label{eq:sys_de}
+\end{align}
+
+% -------------------------------------------------------------------------
+% SUBSECTION 3.4: CALIBRATION
+% -------------------------------------------------------------------------
+\subsection{Calibration}
+\label{subsec:calibration}
+The model is calibrated in two stages. The baseline uses standard NK values from \citet{gali2008}, while the Swiss calibration adapts parameters to Swiss economic characteristics. Table~\ref{tab:calibration} presents the complete parametrization.
+
+The Swiss calibration modifies three key parameters: the inverse IES increases to $\sigma = 1.32$ to match Swiss consumption volatility \citep{cuchecurti2009, rudolf2014}, the inverse Frisch elasticity decreases to $\varphi = 1.00$, reflecting Swiss labor market estimates \citep{rudolf2014}, the discount factor is changed to $\beta = 0.995$.
+
+The inflation response strengthens to $\phi_\pi = 2.00$ to ensure determinacy with all extensions activated and the output gap response increases to $\phi_y = 0.15$ which is higher than \citet{cuchecurti2009} but lower than \citet{rudolf2014}.
+
+The monetary policy shock becomes transitory ($\rho_\nu = 0$) while the shock standard deviation is $\sigma_\nu = 0.25$, corresponding to a 25bp surprise rate cut.
+
+Habit formation ($h = 0.70$) matches slow consumption adjustment \citep{rudolf2014}, reducing interest rate sensitivity from $1/\sigma_\upsilon$ to $(1-h)/\sigma_\upsilon$. Interest rate smoothing ($\rho_i = 0.80$) reflects SNB's gradual adjustment \citep{cuchecurti2009}. Incomplete pass-through ($\alpha_{\text{pass}} = 0.40$) implies 40\% of exchange rate changes transmit to import prices within one quarter which is set by construction, with import share $\alpha_m = 0.23$ matching CPI weights \citep{rudolf2014}. Price indexation ($\gamma = 0.25$) introduces moderate persistence while maintaining forward-looking dynamics. The regime-switching specification varies two Taylor rule parameters: exchange rate leaning ($\phi_{\Delta e}^A = 0.15$ versus $\phi_{\Delta e}^B = 0.20$ under negative rates) and inflation response ($\phi_\pi^A = 2.00$ versus $\phi_\pi^B = 1.70$), testing whether transmission effectiveness differs at the ELB \citep{baumann2025, baurle2014}. All structural parameters remain constant across regimes.
+
+\begin{table}[H]
+	\centering
+	\caption{Model Calibration}
+	\label{tab:calibration}
+	\small
+	\begin{tabular}{@{}llcc@{}}
+		\toprule
+		\textbf{Parameter} & \textbf{Description} & \textbf{Baseline} & \textbf{Swiss} \\
+		\midrule
+		\multicolumn{4}{l}{\textit{Panel A: Preferences and Technology}} \\
+		$\beta$ & Discount factor & 0.99 & 0.995 \\
+		$\sigma$ & Inverse IES & 1.00 & 1.32\textsuperscript{a,b} \\
+		$\varphi$ & Inverse Frisch elasticity & 5.00 & 1.00\textsuperscript{b} \\
+		$\alpha$ & Import share in production & 0.25 & 0.25 \\
+		$\varepsilon$ & Elasticity of substitution & 9.00 & 9.00 \\
+		$\theta$ & Calvo parameter & 0.75 & 0.75 \\
+		$\upsilon$ & Openness parameter & 0.40 & 0.40 \\
+		$\eta$ & Domestic-foreign elasticity & 1.00 & 1.00 \\
+		\midrule
+		\multicolumn{4}{l}{\textit{Panel B: Monetary Policy (Baseline)}} \\
+		$\phi_\pi$ & Inflation response & 1.50 & 2.00 \\
+		$\phi_y$ & Output gap response & 0.125 & 0.15\textsuperscript{a,b} \\
+		\midrule
+		\multicolumn{4}{l}{\textit{Panel C: Shock Processes}} \\
+		$\rho_\nu$ & Policy shock persistence & 0.50 & 0.00 \\
+		$\sigma_\nu$ & Policy shock std. dev. & 0.25 & 0.25 \\
+		\midrule
+		\multicolumn{4}{l}{\textit{Panel D: Extension Parameters}} \\
+		$h$ & Habit formation & -- & 0.70\textsuperscript{b} \\
+		$\rho_i$ & Interest rate smoothing & -- & 0.80\textsuperscript{a} \\
+		$\gamma$ & Price indexation & -- & 0.25 \\
+		$\alpha_{\text{pass}}$ & Exchange rate pass-through & -- & 0.40 \\
+		$\alpha_m$ & Import share in CPI & -- & 0.23 \textsuperscript{b} \\
+		$\phi_{\Delta e}^A$ & ER leaning (Regime A) & -- & 0.15 \\
+		$\phi_{\Delta e}^B$ & ER leaning (Regime B) & -- & 0.20 \\
+		$\phi_\pi^A$ & Inflation response (Regime A) & -- & 2.00 \\
+		$\phi_\pi^B$ & Inflation response (Regime B) & -- & 1.70 \\
+		\bottomrule
+	\end{tabular}
+	\begin{tablenotes}
+		\footnotesize
+		\item \textit{Notes:} Baseline calibration follows \citet{gali2008} Chapter 7. Regime A: (positive rates). Regime B: (negative rates). \textsuperscript{a}\citet{cuchecurti2009}. \textsuperscript{b}\citet{rudolf2014}.
+	\end{tablenotes}
+\end{table}
+
+% -------------------------------------------------------------------------
+% SUBSECTION 3.5: SIMULATION RESULTS (CORRECTED)
+% -------------------------------------------------------------------------
+\subsection{Simulation Results}
+\label{subsec:simulation_results}
+
+This section presents IRF following an unexpected 25bp 
+policy rate cut. The analysis compares four model specifications: the Galí 
+baseline, the Swiss baseline with habit and smoothing, and the full model under Regime A and Regime B. Figure~\ref{fig:irf_4panel} displays dynamic responses over 15 quarters and Table~\ref{tab:impact_responses} summarizes impact effects.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.90\textwidth]{Fig_4Panel_Clean.png}
+	\caption{Impulse Responses to 25bp Expansionary Monetary Policy Shock}
+	\label{fig:irf_4panel}
+	\begin{minipage}{0.95\textwidth}
+		\footnotesize
+		\textit{Notes:} 25bp rate cut. Galí = baseline. Swiss Base = habit + smoothing. 
+		Full (Reg A/B) = all extensions. Inflation in bp, exchange rate in pp.
+	\end{minipage}
+\end{figure}
+
+\paragraph{Domestic Inflation.}
+Domestic inflation responses vary across specifications. The Galí baseline shows the largest impact at 8.8bp, declining monotonically over 10 quarters. The Swiss baseline produces a more dampened response of 5.0bp with slower convergence. Full model specifications generate similar patterns with impact responses of 5.3-5.6bp.
+
+\paragraph{CPI Inflation.}
+CPI inflation shows larger differences. The Galí baseline peaks at 
+19.2bp on impact and declines sharply by quarter 2, while the Swiss baseline 
+reaches 15.7bp. In contrast, full model responses are substantially lower (6.8-7.2bp) and decline gradually over 6-8 quarters.
+
+\paragraph{Exchange Rate.}
+All specifications produce immediate depreciation, ranging from 0.30 to 0.35\% on impact. The Galí baseline then returns steadily toward 0.18\%, while the Swiss baseline starts at 0.32\%. Full model specifications stabilize at persistently higher levels of 0.25-0.26\%.
+
+\paragraph{Policy Rate.}
+The policy rate response depends heavily on shock persistence. The Galí baseline ($\rho_\nu = 0.50$) drops 8.6bp and returns to zero within 4-5 quarters. Swiss specifications ($\rho_\nu = 0$) exhibit deeper initial cuts of 20-23bp but return to zero by quarter 2. Interest rate smoothing ($\rho_i = 0.80$) creates gradual adjustment despite the transitory shock.
+
+\begin{table}[h]
+	\centering
+	\caption{Impulse Response Summary: 25bp Expansionary Shock (Rate Cut)}
+	\label{tab:impact_responses}
+	\begin{tabular}{lcccc}
+		\toprule
+		Variable & Galí Baseline & Swiss Base (H+S) & Full Model (Reg A) & Full Model (Reg B) \\
+		\midrule
+		\multicolumn{5}{l}{\textit{Impact response (quarter 1, basis points)}} \\
+		$\pi_H$ & 8.8 & 5.0 & 5.3 & 5.6 \\
+		$\pi_C$ & 19.2 & 15.7 & 6.8 & 7.2 \\
+		\multicolumn{5}{l}{\textit{Impact response (percentage points)}} \\
+		$e$ & 0.347 & 0.319 & 0.298 & 0.310 \\
+		\bottomrule
+	\end{tabular}
+	\begin{tablenotes}
+		\footnotesize
+		\item \textit{Note:} Responses to 25bp expansionary monetary policy shock 
+		Inflation in basis points. Exchange rate in percentage points ( deviations from steady state).
+	\end{tablenotes}
+\end{table}
+\newpage
+% -------------------------------------------------------------------------
+% SUBSECTION 3.6: TRANSMISSION MECHANISMS (CORRECTED)
+% -------------------------------------------------------------------------
+\subsection{Transmission Mechanisms}
+\label{subsec:transmission}
+This section analyzes the economic mechanisms underlying the simulation results, examining how each extension modifies transmission channels and why the full model produces substantially different responses compared to the baseline.
+
+\paragraph{Baseline Transmission: Galí Model.}
+In the Galí baseline, a 25bp rate cut operates through two reinforcing channels. The demand channel: lower nominal rates reduce the real interest rate below its natural level (equation~\ref{eq:IS_baseline}), stimulating consumption and raising the output gap. The positive output gap generates domestic inflation through the Phillips curve (equation~\ref{eq:NKPC_baseline}), with the large impact response 
+of 8.8bp. The exchange rate channel: the higher output gap increases the ToT (equation~\ref{eq:tot}), corresponding to nominal depreciation (equation~\ref{eq:er_def}). The substantial initial depreciation of 0.35\% feeds directly into CPI inflation through equation~\ref{eq:CPI_baseline}, generating the 19.2bp spike.
+
+\paragraph{Swiss Baseline: Dampening Through Habit and Smoothing.}
+Habit formation ($h = 0.70$) reduces the interest rate sensitivity coefficient 
+in the IS curve from $1/\sigma_\upsilon$ to $(1-h)/\sigma_\upsilon = 0.30/\sigma_\upsilon$, dampening the demand response by 70\%. The muted output gap generates less domestic inflation (5.0bp versus 8.8bp). Interest rate smoothing ($\rho_i = 0.80$) extends policy persistence despite the transitory innovation ($\rho_\nu = 0$). The policy rate exhibits a deeper initial cut of 22.3bp (versus 8.6bp) because the systematic rule responds gradually. The smoothing creates forward-looking effects: households anticipate persistent accommodation, amplifying consumption responses relative to what habit alone would predict.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.95\textwidth]{Fig_Stability_Clean.png}
+	\caption{Stability Demonstration: Habit and Smoothing Are Essential}
+	\label{fig:stability}
+	\begin{minipage}{0.95\textwidth}
+		\footnotesize
+		\textit{Notes:} Left: stable with $h=0.70$, $\rho_i=0.80$. Right: unstable 
+		without these parameters. Habit and smoothing necessary for determinacy.
+	\end{minipage}
+\end{figure}
+
+These parameters are essential for model stability. Figure~\ref{fig:stability} 
+shows that without them ($h=0$, $\rho_i=0$), the model violates Blanchard-Kahn 
+conditions: CPI inflation and the exchange rate explode. Exchange rate leaning, incomplete pass-through, and other extensions create feedback loops that require dampening for stability.
+
+\paragraph{The Role of Incomplete Pass-Through.}
+Incomplete exchange rate pass-through represents the modification with largest outcomes. In baseline models, exchange rate changes transmit immediately and fully to import prices, generating large CPI inflation spikes (19.2bp Galí, 15.7bp Swiss base). With incomplete pass-through, only 40\% of the exchange rate change affects import prices within one quarter (equation~\ref{eq:import_incomplete}), while the remaining 60\% adjusts gradually. The full model specifications show CPI inflation responses of only 6.8-7.2bp, less than half the Swiss baseline, despite similar exchange rate depreciations. The immediate pass-through is $\alpha_m \times \alpha_{\text{pass}} = 0.23 \times 0.40 = 0.092$, meaning only 9.2\% of the exchange rate change transmits to CPI within one quarter.
+
+This reduces CPI inflation responses by more than 50\%, weakening the exchange 
+rate-inflation link. The mechanism explains why the full model generates modest CPI inflation increases (6.8-7.2bp) despite exchange rate depreciations similar to baseline specifications.
+
+\paragraph{Exchange Rate Leaning and Stabilizing Feedback.}
+Exchange rate leaning ($\phi_{\Delta e} > 0$) creates a stabilizing feedback loop. When the initial rate cut stimulates demand and causes depreciation, the systematic Taylor rule (equation~\ref{eq:Taylor_FX}) responds by tightening policy: a 1\% depreciation triggers a 15-20bp rate increase via the $\phi_{\Delta e}\Delta e_t$ term. This tightening dampens the output gap, limiting further depreciation. Forward-looking agents anticipate this feedback through the IS curve and Phillips curve, where expected future gaps affect current demand and inflation. In the full model specifications, exchange rate leaning is sufficiently strong that equilibrium features persistent depreciation (0.25-0.26\%) rather than convergence toward pre-shock levels.
+
+\paragraph{Price Indexation and Inflation Persistence.}
+Price indexation ($\gamma = 0.25$) introduces backward-looking dynamics into the Phillips curve (equation~\ref{eq:NKPC_index}). While 75\% of inflation remains forward-looking, 25\% depends mechanically on past inflation. This creates persistence: in the full model, domestic inflation decays more gradually (8-10 quarters) compared to baseline models (4-6 quarters). Once inflation rises following the rate cut, the indexation term keeps inflation elevated even as output gaps decline.
+
+\paragraph{Impact of Swiss-Specific Extensions.}
+The simulation results demonstrate that Swiss extensions fundamentally alter 
+monetary transmission. Three extensions prove critical. First, incomplete 
+pass-through reduces CPI inflation responses by more than 50\%, breaking the strong link between exchange rates and consumer prices. Second, exchange rate leaning creates stabilizing feedback that prevents excessive depreciation. Third, habit formation dampens demand responses, reducing the output gap channel's strength. Together, these extensions produce a model where rate cuts generate modest CPI inflation increases (6.8-7.2bp versus 19.2bp in Galí, Table~\ref{tab:impact_responses}), persistent but limited depreciation (stabilizing at 0.25-0.26\%), and muted domestic inflation responses (5.3-5.6bp versus 8.8bp). 
+\newpage
+% -------------------------------------------------------------------------
+% SUBSECTION 3.7: REGIME COMPARISON (CORRECTED)
+% -------------------------------------------------------------------------
+\subsection{Regime Comparison: Positive vs Negative Rates}
+\label{subsec:regime_comparison}
+
+This section compares the monetary transmission of positive and negative rate environments.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.95\textwidth]{Fig_Regime_Clean.png}
+	\caption{Regime Comparison: Positive vs Negative Interest Rate Periods}
+	\label{fig:regime_comparison}
+	\begin{minipage}{0.95\textwidth}
+		\small
+		\textit{Notes:} Top: IRF levels for Regime A (blue, positive) and B (red, negative). Bottom: differences (A - B). Exchange rate in percent, inflation in basis points.
+	\end{minipage}
+\end{figure}
+
+\paragraph{Setup.}
+Regime A (positive rates) features stronger inflation response and moderate exchange rate leaning. Regime B (negative rates) features weaker inflation response and stronger exchange rate leaning, reflecting the hypothesis that conventional policy weakens near the ELB while the SNB compensates through exchange rate management.
+
+\paragraph{Results.}
+Figure~\ref{fig:regime_comparison} shows both regimes produce similar dynamics 
+with modest differences. Regime B generates 0.3bp more domestic inflation, 0.4bp more CPI inflation, and 0.013\% more depreciation on impact. Despite stronger exchange rate leaning in Regime B, responses are larger because the weaker inflation response ($\phi_\pi^B = 1.70$ versus $\phi_\pi^A = 2.00$) dominates. This allows larger output gaps, which drive depreciation. With interest rate smoothing ($\rho_i = 0.80$), only 20\% of the rule responds immediately, amplifying the importance of the inflation response coefficient. The small magnitudes, 0.4bp CPI difference (6\%), 0.013\% exchange rate difference (4\%), suggest modest ELB constraints at calibrated values and indicate that empirical detection will require careful identification.
+
+% -------------------------------------------------------------------------
+% SUBSECTION 3.8: SUMMARY (CORRECTED)
+% -------------------------------------------------------------------------
+\subsection{Summary}
+\label{subsec:dsge_summary}
+This section developed a SOE DSGE model to analyze how unexpected SNB rate cuts affect inflation and the exchange rate, the key variables in RQ 1. The baseline from \citet{gali2008} predicts large depreciation and inflation increases. Six Swiss extensions modify this: habit formation dampens demand responses, interest rate smoothing extends persistence, incomplete pass-through weakens the exchange rate-inflation link, exchange rate leaning stabilizes depreciation, price indexation adds inflation persistence, and regime-dependent parameters allow for differences across rate environments.
+
+The Swiss extensions fundamentally alter transmission mechanisms central to RQ1. The full model generates CPI inflation responses less than half the baseline (6.8-7.2bp versus 19.2bp) and persistent moderate depreciation (0.25-0.26\%). Incomplete pass-through is critical, reducing immediate exchange rate transmission to consumer prices from 100\% to 9\%. Regime differences are quantitatively small, suggesting modest ELB constraints at calibrated values.
+
+The model provides theoretical predictions to test empirically. Muted inflation responses and complex exchange rate dynamics predicted by the full model, rather than textbook baselines.
+\newpage
+
+% =========================================================================
+% SECTION 4: EMPIRICAL VALIDATION
+% =========================================================================
+\section{Empirical Validation}
+\label{sec:empirical}
+
+\subsection{Overview}
+\label{subsec:empirical_overview}
+
+This section provides empirical validation of the theoretical predictions from the DSGE model presented in Chapter 3. The analysis applies several methodological approaches to analyze SNB monetary policy transmission mechanisms for the exchange rate and inflation, while also looking at differences between positive and negative rate environments.
+
+The empirical strategy combines four main components: First, a data-driven variable selection approach is implemented using Random Forest importance analysis to identify optimal control variables. Second, a purging regression approach is used to identify monetary policy shocks by removing predictable components of policy decisions. Third, both high-frequency and daily event studies are performed around SNB policy announcements to capture immediate market responses. Fourth, estimate local projections following \citet{jorda2005} are applied to trace dynamic IRF for key macroeconomic variables. Additionally, the study applies several machine learning methods including Random Forest and Causal Forest algorithms to analyze regime heterogeneity and validate the identification strategy.
+
+\subsection{Data}
+\label{subsec:empirical_data}
+
+\subsubsection{Data Sources and Construction}
+
+The empirical analysis uses monthly, daily and high-frequency data from January 2000 to December 2025. Exchange rate data (EUR/CHF) are obtained from TwelveData API at both daily (2000-2025) and hourly frequencies (2020-2025). CPI inflation rates are sourced from the Federal Statistical Office (BFS), while SNB policy rates and LIBOR target ranges are obtained from the SNB Statistical Data Portal. The KOF Barometer, measuring Swiss business cycle conditions, is from ETH Zurich's KOF Swiss Economic Institute. Financial market indicators include the VIX (volatility index) from CBOE and Swiss 2-year government bond yields from SNB sources.
+
+The dataset construction required careful handling of different reporting frequencies and missing observations. Monthly variables are interpolated where necessary using cubic spline methods, while high-frequency exchange rate data are cleaned for obvious outliers and market closure periods. The final dataset contains about 300 monthly observations and over 50,000 high-frequency exchange rate observations.
+
+Policy announcement dates are identified from SNB press releases and monetary policy assessments, with announcement times consistently occurring at 09:30 CET. The data set contains 109 total announcement events, of which 19 represent actual policy rate cuts distributed across positive rate regimes (2000-2014: 11 cuts; 2022-2025: 6 cuts) and the negative rate period (2015-2022: 2 cuts). Additionally, the dataset captures rate hikes concentrated in 2004-2007 and 2022-2023 periods.
+
+\subsubsection{SNB Policy Rate and Institutional Framework}
+
+Figure \ref{fig:policy_timeline} illustrates the development of the SNB policy rate over the sample period, highlighting institutional changes in Swiss monetary policy implementation. From 2000 to June 2019, the SNB implemented policy via a target range for the 3-month CHF LIBOR. For the purpose of the analysis, the policy rate is defined as the midpoint of this range. The LIBOR target range provided flexibility for market rates while signaling policy intentions, with the blue shaded areas in the figure showing these target bands.
+
+A critical institutional change occurred in June 2019 when the SNB transitioned from LIBOR targeting to direct SNB policy rate setting (based on SARON), reflecting global financial market reforms following LIBOR manipulation scandals. This transition is visible in Figure \ref{fig:policy_timeline} as the disappearance of the target range bands after 2019.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{policy_rate_timeline.pdf}
+	\caption{SNB Policy Rate Timeline}
+	\label{fig:policy_timeline}
+\end{figure}
+
+The policy timeline illustrates different phases of Swiss monetary policy: a tightening cycle in the mid-2000s, strong easing during the global financial crisis, a prolonged low-rate period in the early 2010s, the negative interest rate phase starting in 2015, and the recent normalization back into positive territory, followed by a renewed move toward lower rates. Rate cuts are mainly concentrated in crisis periods, whereas rate hikes occur during expansion phases, highlighting the cyclical nature of Swiss monetary policy. 
+
+Figure \ref{fig:rate_histogram} presents the distribution of SNB policy rate changes by magnitude and type. The histogram shows that rate cuts dominate policy actions in the selected time period, especially during crisis periods, with cuts ranging from 12.5 bp to 150 bp. The largest single cut of 150 bp occurred during the November 2008 financial crisis emergency response.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.75\textwidth]{rate_changes_histogram.pdf}
+	\caption{Distribution of SNB Rate Changes by Magnitude (2000-2025)}
+	\label{fig:rate_histogram}
+\end{figure}
+
+
+\subsubsection{Macroeconomic Variable Development}
+Figure \ref{fig:variables_timeline} illustrates the development of key macroeconomic variables, highlighting major economic episodes and their impact on Swiss conditions. 
+
+Panel A shows CPI inflation volatility during crisis periods, with notable deflation during 2009 (-1.4\%) and 2015--2016 following the EUR/CHF floor removal. The recent inflationary episode (2021--2022) reaching 3.5\% represents the highest inflation in over two decades.
+
+Panel B illustrates KOF Barometer fluctuations, with major peaks during the dot-com recession (2001--2003), the global financial crisis (2008--2009), and the COVID-19 pandemic (2020--2021). The indicator shows clear cyclical patterns that help identify Switzerland's business cycle phases for the analysis.
+
+Panel C presents EUR/CHF evolution with the exchange rate floor period (September 2011--January 2015) highlighted in blue shading. The sharp appreciation following the January 2015 floor removal represents the most significant exchange rate shock in the sample. The subsequent gradual depreciation toward 1.10--1.20 reflects both market adjustment and SNB intervention.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{key_variables_timeline.pdf}
+	\caption{Key Variables Timeline: CPI Inflation, KOF Barometer, EUR/CHF, and VIX (2000--2025)}
+	\label{fig:variables_timeline}
+\end{figure}
+
+Panel D shows the VIX capturing major episodes of global financial stress, including the dot-com crash, the global financial crisis, the European sovereign debt crisis, and the COVID-19 shock. These episodes closely align with phases of Swiss monetary policy easing, highlighting the interaction between global risk sentiment and domestic policy decisions.
+
+\subsubsection{Descriptive Statistics}
+
+Table \ref{tab:summary_stats} reports descriptive statistics for the main variables used in the analysis. Beyond the time-series patterns shown in Figure \ref{fig:variables_timeline}, the table summarizes key properties of the data. The SNB policy rate averages 0.46\% over the full sample, reflecting the coexistence of extended low-rate and negative-rate periods with earlier tightening phases. CPI inflation averages 0.58\% with moderate volatility ($\sigma$ = 1.03\%), consistent with Switzerland’s generally stable inflation environment.
+
+The KOF Barometer fluctuates around its long-run mean of 100 with substantial cyclical variation, while the VIX exhibits an average level of 19.8 with pronounced crisis-related spikes. Two-year government bond yields range from -1.16\% during the negative interest rate period to 3.58\% in the early 2000s, providing a complementary measure of monetary conditions.
+
+\begin{table}[H]
+	\centering
+	\caption{Descriptive Statistics: Monthly Data (2000--2025)} 
+	\label{tab:summary_stats}
+	\begin{tabular}{lccccc}
+		\toprule
+		Variable & Mean & SD & Min & Max & N \\ 
+		\midrule
+		Policy Rate (\%) & 0.456 & 1.117 & -0.750 & 3.500 & 299 \\ 
+		CPI Inflation (\%) & 0.582 & 1.032 & -1.400 & 3.500 & 300 \\ 
+		KOF Barometer & 99.678 & 8.909 & 56.980 & 129.513 & 300 \\ 
+		EUR/CHF & 1.271 & 0.230 & 0.927 & 1.677 & 300 \\ 
+		2Y Yield (\%) & 0.809 & 1.247 & -1.158 & 3.583 & 300 \\ 
+		VIX & 19.804 & 7.944 & 9.510 & 59.890 & 300 \\ 
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\subsubsection{Variable Correlation Structure}
+
+Figure \ref{fig:correlation_matrix} presents the correlation structure among key variables, revealing important relationships that guide the empirical strategy. The strongest correlations appear between financial market variables: EUR/CHF and 2-year yields (0.81), policy rates and 2-year yields (0.88), and EUR/CHF and policy rates (0.59), reflecting the tight linkages in Swiss financial markets.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{correlation_heatmap.pdf}
+	\caption{Variable Correlation Matrix}
+	\label{fig:correlation_matrix}
+\end{figure}
+
+CPI inflation shows relatively low correlations with most variables, with the strongest relationship being with policy rates (0.47), suggesting limited responsiveness of Swiss inflation to domestic financial conditions. The negative correlation between KOF and VIX (-0.44) confirms the expected inverse relationship between business conditions and financial stress.
+
+\subsubsection{Data-Driven Control Variable Selection}
+To ensure robust identification of monetary policy shocks, a data-driven approach is applied to control variable selection using Random Forest importance analysis. This methodology identifies which macroeconomic and financial variables most strongly predict exchange rate responses, providing empirical guidance for the purging regression specification.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{variable_importance_selection.pdf}
+	\caption{Variable Importance for Control Variable Selection}
+	\label{fig:variable_importance}
+\end{figure}
+
+Figure \ref{fig:variable_importance} presents Random Forest variable importance rankings for predicting EUR/CHF changes. The analysis reveals that the Negative Regime dummy exhibits highest importance, reflecting the structural differences in transmission mechanisms across interest rate regimes. Among fundamental economic variables, lagged CPI inflation and lagged KOF Barometer rank highest, supporting their inclusion as core controls for business cycle and inflation conditions.
+
+Financial market variables show moderate importance, with VIX ranking above 2-year yields, suggesting that global risk sentiment provides more predictive power for Swiss exchange rates than domestic yield curve information. This ranking guides the selection of control variables for the empirical analysis. For shock identification (purging regression), the two most important lagged variables are used: CPI (t-1) and KOF (t-1). The local projection specifications incorporate the top 4 most important variables: CPI (t-1), KOF (t-1), VIX, and 2-year yields.
+
+\subsection{Methodology}
+\label{subsec:empirical_methodology}
+\subsubsection{Research Objectives and Methodological Framework}
+
+The following four research objectives guide the empirical analysis: (1) \textit{Identification} of unanticipated monetary policy shocks from observed SNB decisions, (2) \textit{Direction} of exchange rate and inflation responses to these shocks, (3) \textit{Magnitude} of policy transmission effects across different time horizons, and (4) \textit{IRF} tracing the dynamic adjustment paths of key macroeconomic variables.
+
+Each objective needs different methodological approaches. Shock identification employs purging regressions to remove the predictable component of policy decisions. Response direction and magnitude are assessed through high-frequency event studies capturing immediate market reactions. Dynamic  IRF utilize local projections to trace adjustment paths across multiple horizons while controlling for endogenous feedback effects.
+
+\subsubsection{Shock Identification: Purging Regression}
+To identify unanticipated monetary policy shocks, a purging regression approach is applied. This methodology is based on the idea that observed policy rate changes reflect both a systematic response to economic conditions and an unsystematic component, which represents the true policy surprise.
+
+
+The purging regression is specified as
+\begin{equation}
+	\Delta i_t = \alpha + \beta_1 \text{CPI}_{t-1} + \beta_2 \text{KOF}_{t-1} + \epsilon_t,
+	\label{eq:purging}
+\end{equation}
+where $\Delta i_t$ denotes the policy rate change at announcement $t$, $\text{CPI}_{t-1}$ is lagged year-on-year CPI inflation, and $\text{KOF}_{t-1}$ is the lagged KOF Economic Barometer capturing Swiss business cycle conditions. The residual $\epsilon_t$ captures the unanticipated component of monetary policy decisions and serves as the identified policy shock.
+
+\paragraph{Exogeneity Assumption and Potential Violations.}
+The identification strategy relies on the exogeneity assumption that $E[\epsilon_t \mid \text{CPI}_{t-1}, \text{KOF}_{t-1}] = 0$, meaning the policy shock residual is uncorrelated with the included control variables. This assumption may be violated in several ways. First, the SNB may respond to private information not captured in the lagged public indicators, creating correlation between policy decisions and unobserved economic conditions. Second, when the SNB announces policy decisions, it may simultaneously reveal its views about economic conditions, creating information effects that make it harder to isolate the pure policy shock.
+
+To reduce these concerns, the control set includes the most informative publicly available indicators of Swiss economic conditions: lagged CPI inflation captures the SNB's inflation mandate, while the lagged KOF Barometer summarizes real activity and business cycle conditions. The use of lagged rather than contemporaneous variables reduces the risk of bad control bias from variables that respond simultaneously to policy shocks.
+
+However, some endogeneity may remain. This approach cannot separate pure policy shocks from information effects, as would be possible with richer identification strategies using central bank forecasts or asset price comovements. Such methods are not feasible given data constraints over the full sample period. Additionally, the limited control set may not capture the full information available to policymakers at the time of decisions.
+
+Furthermore, as rate cuts are concentrated in crisis periods, this can potentially create correlation across shocks. Robust standard errors are used to address this concern, though some residual dependence may remain.
+\newpage
+\subsubsection{High-Frequency Event Studies}
+
+Event studies measure financial market responses in short windows around policy announcements, providing direct evidence of how markets react to policy surprises at high frequency.
+
+For each rate cut announcement $i$ and relative time period $h$ (days or hours from announcement), the following regression is estimated:
+\begin{equation}
+	R_{i,h} = \alpha_h + \beta_h \hat{\epsilon}_i + u_{i,h}
+	\label{eq:event_regression}
+\end{equation}
+where $R_{i,h}$ represents the log percentage return for event $i$ at horizon $h$ relative to the announcement, and $\hat{\epsilon}_i$ is the monetary policy shock for event $i$ identified via the purging regression (equation \ref{eq:purging}). The coefficient $\beta_h$ measures the EUR/CHF response per 1 pp unexpected rate cut at horizon $h$.
+
+This regression-based approach scales responses by shock magnitude, addressing heterogeneity in policy changes (which range from 12.5 to 150 bp in the sample). Standard errors are computed using heteroskedasticity-robust covariance matrices (HC1). The specification exploits the fact that larger monetary shocks should generate proportionally larger market responses, providing a cleaner identification of the exchange rate transmission mechanism.
+
+Daily event studies use 21-day windows ($h \in \{-10, ..., 0, ..., 10\}$) around all 19 rate cut announcements (2000--2025). Hourly event studies focus on recent announcements (2020--2025) with 13-hour windows ($h \in \{-6, ..., 0, ..., 6\}$) around the 09:30 CET announcement time. Due to the limited number of recent rate cuts (6 events), the hourly analysis presents simple cross-sectional averages rather than shock-scaled regression estimates, providing descriptive evidence of intra-day volatility patterns around announcements.
+
+Cumulative responses aggregate the estimated coefficients across horizons:
+\begin{equation}
+	\beta_h^{\text{cum}} = \sum_{j=0}^{h} \beta_j, \quad SE(\beta_h^{\text{cum}}) = \sqrt{\sum_{j=0}^{h} SE(\beta_j)^2}
+	\label{eq:cumulative_response}
+\end{equation}
+where cumulative standard errors assume independence across time periods, providing a conservative estimate of uncertainty.
+
+\subsubsection{Local Projections for Dynamic Analysis}
+
+Local projections \citep{jorda2005} provide a flexible framework for estimating IRF without imposing restrictive dynamic structure. The analysis employs a simplified specification with a simple set of controls, relying on the purging regression to remove systematic dynamics from the shock variable. For each horizon $h = 1, 2, ..., 12$ months, it is estimated:
+
+\begin{equation}
+	y_{t+h} = \alpha_h + \beta_h \hat{\epsilon}_t + \mathbf{\phi}_h \mathbf{Z}_t + u_{t+h}
+	\label{eq:local_projections}
+\end{equation}
+where $y_{t+h}$ denotes the outcome variable (EUR/CHF log change or CPI inflation), $\hat{\epsilon}_t$ represents the identified monetary policy shock from equation \eqref{eq:purging}, and $\mathbf{Z}_t$ includes four control variables selected via Random Forest variable importance analysis: contemporaneous 2-year Swiss government bond yield (market expectations), contemporaneous VIX index (global risk sentiment), lagged KOF Economic Barometer (Swiss business conditions), and lagged CPI inflation (inflation persistence). The coefficient $\beta_h$ traces the dynamic response of variable $y$ to monetary policy shocks across horizons. The purging regression removes systematic policy responses to observables, reducing endogeneity concerns. This allows for a simple control set that captures key confounding factors such as market expectations, global financial stress, and domestic macroeconomic conditions, while avoiding overfitting.
+
+The estimation procedure relies on two key technical assumptions. The specification assumes that $\hat{\epsilon}_t$ is exogenous to future macroeconomic developments conditional on the selected controls. Since multi-horizon forecasts inherently overlap, projection residuals exhibit serial correlation by construction, necessitating Newey--West HAC standard errors with bandwidth set to the forecast horizon $h$.
+\newpage
+
+\subsubsection{Regime Analysis}
+
+To examine transmission differences across positive and negative interest rate periods, the local projection specification is extended with regime interactions:
+
+\begin{equation}
+	y_{t+h} = \alpha_h + \beta_h^{pos} \hat{\epsilon}_t \cdot D_t^{pos} + \beta_h^{neg} \hat{\epsilon}_t \cdot D_t^{neg} + \mathbf{\phi}_h \mathbf{Z}_t + u_{t+h}
+	\label{eq:regime_projections}
+\end{equation}
+
+where $D_t^{pos}$ and $D_t^{neg}$ are indicator variables for positive rate periods (2000-2014, 2022-2025) and negative rate periods (2015-2022) respectively, and $\mathbf{Z}_t$ includes the same four control variables as in equation \eqref{eq:local_projections}. The coefficients $\beta_h^{pos}$ and $\beta_h^{neg}$ allow transmission mechanisms to differ across regimes.
+
+Regime differences are formally tested using Wald statistics:
+
+\begin{equation}
+	W_h = (\beta_h^{pos} - \beta_h^{neg})' [\widehat{Var}(\beta_h^{pos} - \beta_h^{neg})]^{-1} (\beta_h^{pos} - \beta_h^{neg})
+	\label{eq:wald_test}
+\end{equation}
+
+computed using Newey-West robust variance-covariance matrices to account for serial correlation in multi-horizon forecasts.
+
+\subsubsection{Machine Learning Validation}
+
+The linear methods are complemented with three machine learning approaches to examine nonlinearities, treatment heterogeneity, and predictive accuracy.
+
+\textbf{Variable Importance Analysis:} Random Forest importance analysis guides control variable selection for both purging regressions and local projections. The analysis ranks variable importance via Gini impurity reduction:
+
+\begin{equation}
+	\text{Importance}(X_j) = \sum_{t=1}^{T} \sum_{s \in S_t} p(s) \cdot \Delta\text{Gini}(s, X_j)
+	\label{eq:variable_importance}
+\end{equation}
+
+where $T$ denotes trees, $S_t$ represents splits in tree $t$, $p(s)$ is the sample proportion reaching split $s$, and $\Delta\text{Gini}(s, X_j)$ measures impurity reduction from splitting on variable $X_j$. This data-driven approach identifies the four most predictive controls: 2-year yields, VIX, lagged KOF, and lagged CPI inflation.
+\newpage
+\textbf{Treatment Heterogeneity Analysis:} Causal Forest methodology estimates CATEs to identify sources of treatment heterogeneity beyond simple regime classification:
+
+\begin{equation}
+	\tau(x) = E[y_1(x) - y_0(x) | X = x]
+	\label{eq:causal_forest}
+\end{equation}
+
+where $\tau(x)$ represents the conditional average treatment effect for units with characteristics $x$, and $y_1(x)$, $y_0(x)$ denote potential outcomes under treatment and control. The analysis uses the four highest-ranking variables from the Random Forest importance analysis: VIX and 2-year Swiss government bond yield as well as lagged KOF Economic Barometer and lagged CPI inflation. The policy rate change itself is excluded from the feature matrix since it represents the treatment variable rather than a covariate for predicting treatment heterogeneity. Additionally, the negative regime indicator is included to capture potential regime-dependent heterogeneity beyond the continuous economic variables.
+
+\textbf{Predictive Validation:} Out-of-sample prediction exercises over 2021--2023 compare forecasting accuracy between linear local projections and Random Forest models:
+
+\begin{equation}
+	y_{t+h} = f(\hat{\epsilon}_t, \mathbf{X}_t) + u_t
+	\label{eq:random_forest}
+\end{equation}
+
+where $f(\cdot)$ represents the Random Forest function. RMSE comparisons validate the simple linear approach, with local projections achieving superior or comparable prediction accuracy relative to Random Forest and other machine learning methods for EUR/CHF responses.
+
+\textbf{Machine Learning in Time Series Context:} Standard machine learning methods like Random Forest assume independent observations, but macroeconomic time series violate this assumption due to persistence and cyclical patterns. Causal Forest analysis requires additional assumptions (unconfoundedness, overlap, and stable treatment effects) that are difficult to satisfy with time series data. Therefore, machine learning results should be viewed as exploratory analysis that complements, rather than replaces, the main linear identification approach.
+\newpage
+\subsection{Results}
+\label{subsec:empirical_results}
+\subsubsection{Shock Identification}
+The purging regression successfully identifies monetary policy shocks using lagged CPI inflation and lagged KOF Barometer as control variables. Table \ref{tab:purging_regression} presents the estimated purging regression, which includes 19 rate cut observations.
+
+\begin{table}[H]
+	\centering
+	\caption{Purging Regression: Identifying Exogenous Policy Shocks}
+	\label{tab:purging_regression}
+	\small
+	\begin{tabular}{lcc}
+		\toprule
+		& Coefficient & Robust Std. Error \\
+		\midrule
+		CPI Inflation (t$-$1) & $-$0.048 & (0.051) \\
+		KOF Barometer (t$-$1) & $-$0.009 & (0.011) \\
+		Constant              & 0.812    & (1.235) \\
+		\midrule
+		Observations          & \multicolumn{2}{c}{19} \\
+		R$^{2}$              & \multicolumn{2}{c}{0.098} \\
+		Adjusted R$^{2}$     & \multicolumn{2}{c}{$-$0.014} \\
+		\bottomrule
+	\end{tabular}
+	
+	\vspace{0.2cm}
+	\footnotesize 
+	\textit{Notes:} $^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01
+\end{table}
+
+The regression reveals that both lagged CPI inflation and KOF Barometer enter with negative coefficients as expected. The SNB is more likely to cut rates when past inflation is elevated and economic conditions are weak, but neither achieves statistical significance at conventional levels. This reflects the challenge of predicting SNB policy decisions with limited degrees of freedom (19 observations) and the discretionary nature of monetary policy making. The R$^{2}$ of 9.8\% indicates that the selected control variables (lagged CPI inflation and KOF Barometer) explain approximately 10\% of the variation in SNB policy rate changes. The remaining 90\% of policy variation forms the basis for shock identification, though this unexplained variation may reflect both unexpected policy actions and systematic responses to other observables not included in the regression specification.
+
+Despite limited explanatory power, the purging regression successfully generates monetary policy shocks with mean zero and standard deviation of 0.43 pp. These shocks provide substantial identification variation for downstream analysis while ensuring that residual policy variation is orthogonal to observable macroeconomic conditions captured by inflation and business cycle indicators.
+
+\subsubsection{Event Study Evidence}
+\paragraph{Daily Event Studies}
+
+This analysis provides evidence of immediate market responses to SNB rate cut announcements scaled to 1 pp shocks. Figure \ref{fig:daily_event} presents regression-based estimates across 19 rate cuts over 21-day windows centered on announcement dates.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{daily_event_study.pdf}
+	\caption{Daily Event Study: EUR/CHF Response to Rate Cut Announcements}
+	\label{fig:daily_event}
+	\vspace{0.2cm}
+	\footnotesize
+	\textit{Notes:} EUR/CHF response to 1pp rate cut across 19 announcements (2000--2025). Shaded area: 95\% CI with robust standard errors.
+\end{figure}
+
+The results show a the following pattern: rate cut announcements weaken the Swiss franc (CHF depreciates). A 1 pp unexpected rate cut produces approximately 4-5\% CHF depreciation (EUR/CHF increases) on impact, with effects peaking at announcement and fading over the following week.
+
+Figure \ref{fig:daily_cumulative} presents cumulative effects, confirming persistent CHF weakening following rate cuts with maximum cumulative CHF depreciation (EUR/CHF increase) reaching approximately 6\% per pp shock by day 6.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{daily_cumulative_response.pdf}
+	\caption{Cumulative EUR/CHF Response to Rate Cut Announcements}
+	\label{fig:daily_cumulative}
+	\vspace{0.2cm}
+	\footnotesize
+	\textit{Notes:} Cumulative EUR/CHF response to 1pp rate cut. Shaded area: 95\% CI.
+\end{figure}
+
+\paragraph{High-Frequency Analysis}
+
+Hourly event studies focusing on recent announcements (2020-2025) provide descriptive evidence of intra-day patterns around SNB policy announcements. Figure \ref{fig:hourly_event} presents average returns across 6 rate cuts over 13-hour windows.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{hourly_event_study.pdf}
+	\caption{Hourly Event Study: EUR/CHF Response to Rate Cut Announcements}
+	\label{fig:hourly_event}
+	\vspace{0.2cm}
+	\footnotesize
+	\textit{Notes:} Simple averages across 6 announcements (2020--2025), ±6 hours around 09:30 CET. Limited sample prevents reliable regression scaling. Shaded area: 95\% CI.
+\end{figure}
+
+The hourly data reveal substantial intra-day volatility around announcement times, though the limited sample size (6 recent events) prevents precise shock-scaled estimation at this frequency. Hourly returns show elevated volatility in the immediate window around announcements, consistent with rapid market processing of policy surprises. However, the high volatility and small sample size make statistical inference unreliable at hourly frequency. The daily event study (19 events) provides more robust evidence by pooling across a longer sample period, enabling shock-scaled estimation that accounts for heterogeneity in policy change magnitudes. Both analyses confirm immediate market reactions to SNB announcements.
+
+\subsubsection{Dynamic Transmission: Local Projection Results}
+
+\paragraph{EUR/CHF Exchange Rate Responses}
+
+Local projection estimates reveal the dynamic transmission of monetary policy shocks to the EUR/CHF exchange rate. Table \ref{tab:lp_fx} presents coefficients for a 1 pp surprise rate cut across selected horizons, estimated using the specification in equation \eqref{eq:local_projections} with four control variables.
+
+\begin{table}[H]
+	\centering
+	\caption{Local Projections: EUR/CHF Response to 1pp Rate Cut Shock} 
+	\label{tab:lp_fx}
+	\begin{tabular}{crrcrr}
+		\toprule
+		Horizon & Coefficient & Std. Error & 95\% CI & t-statistic & p-value \\ 
+		\midrule
+		1 & 4.53*** & 1.47 & [1.64, 7.42] & 3.08 & 0.002 \\ 
+		2 & 3.58*** & 1.12 & [1.39, 5.78] & 3.20 & 0.002 \\ 
+		6 & 2.75** & 1.30 & [0.20, 5.30] & 2.12 & 0.035 \\ 
+		12 & 0.57 & 2.01 & [$-$3.36, 4.51] & 0.28 & 0.776 \\ 
+		\bottomrule
+	\end{tabular}
+	
+	\vspace{0.2cm}
+	
+	{\footnotesize
+		\textit{Notes:} $^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01}
+\end{table}
+The results show statistically significant EUR/CHF increases (Swiss franc depreciation) following unexpected rate cuts. A 1 pp surprise rate cut produces a 4.53\% EUR/CHF increase on impact, declining to 3.58\% at 2 months and 2.75\% at 6 months. By 12 months, the effect has dissipated to 0.57\% and loses statistical significance.
+
+Figure \ref{fig:irf_eur_chf} visualizes the complete IRF across all 12 monthly horizons with 95\% CI, confirming the impact effect and subsequent decline.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.85\textwidth]{irf_eur_chf.pdf}
+	\caption{EUR/CHF Impulse Response to 1pp Rate Cut Shock}
+	\label{fig:irf_eur_chf}
+	\vspace{0.2cm}
+	\footnotesize
+	\textit{Notes:} Blue: positive regime. Red: negative regime. Shaded areas: 95\% CI.
+\end{figure}
+
+These estimates use the full Random Forest-selected control set; robustness checks using only predetermined lagged controls (Appendix \ref{app:robustness_controls}) yield identical point estimates, confirming that the findings are not driven by potentially endogenous contemporaneous variables.
+\paragraph{CPI Inflation Responses}
+
+Table \ref{tab:lp_cpi} examines CPI inflation responses to monetary policy shocks. After controlling for inflation persistence through lagged CPI, the results show no statistically significant inflation response across any forecast horizon.
+
+\begin{table}[H]
+	\centering
+	\caption{Local Projections: CPI Inflation Response to 1pp Rate Cut Shock} 
+	\label{tab:lp_cpi}
+	\begin{tabular}{crrcrr}
+		\toprule
+		Horizon & Coefficient & Std. Error & 95\% CI & t-statistic & p-value \\ 
+		\midrule
+		1 & 0.14 & (0.29) & [$-$0.42, 0.70] & 0.49 & 0.627 \\ 
+		2 & 0.13 & (0.42) & [$-$0.69, 0.95] & 0.31 & 0.755 \\ 
+		6 & 0.07 & (0.44) & [$-$0.79, 0.93] & 0.16 & 0.870 \\ 
+		12 & $-$0.29 & (0.58) & [$-$1.42, 0.85] & $-$0.50 & 0.618 \\ 
+		\bottomrule
+	\end{tabular}
+	
+	\vspace{0.2cm}
+	
+	{\footnotesize
+		\textit{Notes:} $^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01}
+\end{table}
+
+Point estimates remain small in magnitude, ranging from $-$0.29 to 0.14 pp, with CI that include zero at every horizon. At the impact horizon, the coefficient is 0.14 pp, by six months 0.07 pp and at twelve months, $-$0.29 pp. None achieve statistical significance.
+
+This result is economically meaningful. It contrasts sharply with the significant exchange rate effects, suggesting that currency movements do not reliably translate into inflation changes across the sample period. The CI are relatively wide, reflecting inflation volatility and the overlapping nature of multi-horizon forecasts.
+
+Figure \ref{fig:irf_cpi} illustrates the CPI IRF, showing essentially flat responses with wide CI encompassing zero at all horizons. These insights motivate the regime-specific analysis below. The absence of a pooled effect masks substantial differences between positive and negative interest rate regimes, where transmission mechanisms may differ.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.85\textwidth]{irf_cpi.pdf}
+	\caption{CPI Inflation Impulse Response to 1pp Rate Cut Shock}
+	\label{fig:irf_cpi}
+	\vspace{0.2cm}
+	\footnotesize
+	\textit{Notes:} CPI inflation response to 1pp rate cut. Shaded area: 95\% CI with Newey-West HAC standard errors.
+\end{figure}
+
+\subsubsection{Transmission Heterogeneity Across Policy Regimes}
+The pooled results mask substantial differences in monetary policy transmission across interest rate regimes. This section re-estimates local projections with separate coefficients for the positive-rate regime (2000--2014, 2022--2025) and the negative-rate regime (2015--2022), following equation \eqref{eq:regime_projections}. 
+
+An important limitation is that the negative-rate period contains only two rate cuts, both coinciding with the January 2015 EUR/CHF floor removal, which limits the interpretability of these results.
+
+\paragraph{Exchange Rate Regime Comparison}
+
+Table \ref{tab:lp_fx_regime} and Figure \ref{fig:irf_eur_chf_regime} present regime-specific EUR/CHF responses.The negative-rate regime shows much larger point estimates at short horizons. At impact, the effect is 11.22\% compared to 4.13\% in the positive regime. However, these differences are not statistically significant due to very large standard errors.
+
+\begin{table}[H]
+	\centering
+	\caption{Regime Comparison: EUR/CHF Response (Positive vs Negative Rates)} 
+	\label{tab:lp_fx_regime}
+	\begin{tabular}{crrrrrr}
+		\toprule
+		Horizon & Positive & SE & Negative & SE & Wald F & p-value \\ 
+		\midrule
+		1 & 4.13*** & (1.26) & 11.22 & (18.06) & 0.15 & 0.696 \\ 
+		2 & 2.93*** & (1.01) & 14.70 & (11.24) & 1.09 & 0.297 \\ 
+		6 & 2.27** & (1.22) & 10.79 & (8.73) & 0.94 & 0.333 \\ 
+		12 & 1.42 & (1.86) & $-$13.32** & (6.73) & 4.63 & 0.032 \\ 
+		\bottomrule
+	\end{tabular}
+	\vspace{0.2cm}
+	
+	{\footnotesize
+		\textit{Notes:} $^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01}
+\end{table}
+
+The positive-rate regime shows statistically significant responses of moderate size. The effect is 4.13\% at impact and declines to 2.27\% at 6 months. The negative-rate regime estimates are extremely imprecise. Standard errors reach 18.06 at the one-month horizon. This may be due to the small number of rate cuts during the negative-rate period and high volatility following the January 2015 EUR/CHF floor removal.
+
+Formal Wald tests show no significant regime differences at horizons 1, 2, and 6 (all p-values > 0.29). The apparent differences are not statistically distinguishable given the data limitations. Only at twelve months does the test reject equality.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{irf_eur_chf_regime.pdf}
+	\caption{EUR/CHF Response by Interest Rate Regime}
+	\label{fig:irf_eur_chf_regime}
+	\vspace{0.2cm}
+	{\footnotesize
+		\textit{Notes:} Blue: positive regime. Red: negative regime. Shaded areas: 95\% CI.}
+\end{figure}
+
+\paragraph{CPI Inflation Regime Comparison}
+
+The CPI regime comparison (Table \ref{tab:lp_cpi_regime} and Figure \ref{fig:irf_cpi_regime}) reveal the following: monetary policy transmission to inflation differs fundamentally across interest rate regimes.
+
+\begin{table}[H]
+	\centering
+	\caption{Regime Comparison: CPI Inflation Response (Positive vs Negative Rates)} 
+	\label{tab:lp_cpi_regime}
+	\begin{tabular}{crrrrrr}
+		\toprule
+		Horizon & Positive & SE & Negative & SE & Wald F & p-value \\ 
+		\midrule
+		1 & 0.07 & (0.29) & 1.23*** & (0.14) & 12.21 & 0.001 \\ 
+		2 & 0.02 & (0.43) & 2.01*** & (0.39) & 11.86 & 0.001 \\ 
+		6 & $-$0.16 & (0.45) & 3.92*** & (0.54) & 31.47 & 0.000 \\ 
+		12 & $-$0.66 & (0.46) & 5.79*** & (0.93) & 40.24 & 0.000 \\ 
+		\bottomrule
+	\end{tabular}
+	\vspace{0.2cm}
+	
+	{\footnotesize
+		\textit{Notes:} $^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01}
+\end{table}
+
+\textbf{Positive Rate Regime:} Under conventional monetary policy (positive rates), SNB rate cuts produce no measurable inflation response. The coefficients are uniformly small and statistically insignificant: 0.07 pp at impact, 0.02 pp at two months, and $-$0.66 pp at twelve months. The CI include zero at all horizons.
+
+\textbf{Negative Rate Regime:} In stark contrast, monetary policy shocks during the negative-rate period generate substantial and statistically significant inflation increases. The impact effect is 1.23pp, rising monotonically to 2.01 pp at two months, 3.92 pp at six months, and 5.79 pp at twelve months. All coefficients are highly statistically significant.
+
+The Wald tests show strong statistical evidence of regime differences. The tests reject equality at all horizons. At the twelve-month horizon, the regime difference is 6.45 pp. This difference is both economically large and precisely estimated.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.85\textwidth]{irf_cpi_regime.pdf}
+	\caption{CPI Inflation Response by Interest Rate Regime}
+	\label{fig:irf_cpi_regime}
+	\vspace{0.2cm}
+	{\footnotesize
+		\textit{Notes:} Blue: positive regime. Red: negative regime. Regime-dependent transmission.}
+\end{figure}
+
+\paragraph{Interpretation and Limitations}
+The CPI transmission asymmetry requires careful interpretation given data constraints and the small sample of cuts in negative rate environments. The negative-rate period overlaps with the EUR/CHF floor regime and its dramatic January 2015 removal. This 20\% appreciation may have made exchange rate movements translate more directly to consumer prices. Under positive rates, gradual exchange rate changes were absorbed in distribution margins without affecting consumer prices.
+
+The large point estimates (5.79 pp at twelve months) likely reflect this unique episode rather than typical negative-rate properties. Despite limited observations, the precise estimates and consistent pattern across horizons suggest robust results. These estimates may reflect this unique Swiss episode rather than general negative-rate effects.
+
+\textbf{Robustness:} This regime-dependent transmission survives robustness checks. Using only predetermined lagged controls to eliminate potential bad control bias (Appendix \ref{app:robustness_controls}), the regime differences remain highly significant and actually strengthen (6.15 pp vs 5.79 pp at twelve months), confirming that the main findings are not driven by contemporaneous control endogeneity.
+
+\subsubsection{Machine Learning Analysis and Treatment Heterogeneity}
+
+Machine learning methods provide additional insights into treatment heterogeneity and nonlinear relationships beyond simple regime classifications. Random Forest analysis confirms the importance of financial stress indicators and business cycle conditions in determining policy transmission strength.
+
+Causal Forest estimation reveals significant heterogeneity in treatment effects based on economic conditions. Figure \ref{fig:cate_regime} presents the distribution of CATE across regimes, showing substantial within-regime variation.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{cate_by_regime.pdf}
+	\caption{Conditional Average Treatment Effects by Interest Rate Regime}
+	\label{fig:cate_regime}
+	\vspace{0.2cm}
+	\footnotesize
+	\textit{Notes:} CATEs from Causal Forest. Treatment effects vary with economic conditions beyond regime indicators.
+\end{figure}
+
+The Causal Forest analysis suggests that treatment effects vary with economic conditions beyond simple regime classification, with larger responses observed during periods of higher financial stress.
+
+\subsubsection{Predictive Validation}
+
+Out-of-sample prediction exercises validate the linear local projection approach against machine learning alternatives. Figure \ref{fig:prediction_validation} compares prediction accuracy for EUR/CHF responses over 2021-2023.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{prediction_comparison.pdf}
+	\caption{Out-of-Sample Prediction Performance: EUR/CHF Response}
+	\label{fig:prediction_validation}
+	\vspace{0.2cm}
+	\footnotesize
+	\textit{Notes:} Comparison of prediction accuracy across methods. RMSE reported for each approach.
+\end{figure}
+
+Linear local projections achieve superior or comparable prediction accuracy relative to Random Forest and other machine learning methods, validating the simple empirical approach.
+\newpage
+\subsection{Key Findings}
+\label{subsec:key_findings}
+The empirical analysis yields three main findings. First, SNB rate cuts generate immediate and statistically significant exchange rate effects: a 1 pp unexpected rate cut leads to 4.53\% EUR/CHF increase on impact (CHF depreciates by 4.53\%), consistent with traditional interest rate channels. The effect persists through six months (2.75\%) before declining to zero by twelve months.
+
+Second, and most importantly, monetary policy transmission to inflation differs \textit{fundamentally} across interest rate regimes. Under conventional positive rates, rate cuts produce no measurable inflation response, coefficients are near zero and statistically insignificant at all horizons. Under negative rates, the same shocks generate large inflation increases: 1.23 pp on impact rising monotonically to 5.79 pp by twelve months, all highly statistically significant. Statistical tests confirm significant regime differences at all horizons.
+
+Third, the data-driven approach to control variable selection via Random Forest successfully identifies relevant predictors: 2-year yield, VIX, lagged KOF, and lagged CPI. These capture market expectations, global risk sentiment, business cycle conditions, and inflation persistence respectively, providing a theoretically grounded yet empirically validated control set.
+
+\subsubsection{Interpretation Caveats}
+
+Three methodological constraints affect result interpretation. First, the negative-rate period contains only two rate cuts, both coinciding with the January 2015 EUR/CHF floor removal, limiting generalizability of regime differences. Second, monthly-frequency purging regression cannot address intraday simultaneity or separate policy shocks from information effects. Third, the low explanatory power ($R²$= 0.098) indicates most policy variation remains unexplained by observable controls. Section~\ref{subsec:limitations} provides detailed discussion of these constraints and their implications for causal inference. Robustness checks using only predetermined lagged controls (Appendix~\ref{app:robustness_controls}) confirm that regime-dependent inflation transmission remains highly significant (6.15 pp at twelve months), suggesting baseline estimates are conservative.
+
+% =========================================================================
+% SECTION 5: DISCUSSION
+% =========================================================================
+\section{Discussion}
+\label{sec:discussion}
+This chapter combines the theoretical predictions from the Swiss-calibrated 
+DSGE model with the empirical evidence to answer the two research questions. 
+The analysis focuses on where theory and evidence align or diverge, 
+and what these patterns reveal about Swiss monetary transmission. The findings are contextualized within the existing literature on exchange rate and inflation transmission as well as regime-dependent monetary policy effectiveness. 
+
+Results should be interpreted cautiously given monthly-frequency identification constraints and limited rate cut sample size (detailed in Section~\ref{subsec:limitations}). One technical clarification is important: DSGE responses are upscaled from 25bp to 1pp shocks by a factor of four for comparability with empirical estimates.
+
+% -------------------------------------------------------------------------
+\subsection{Exchange Rate Transmission}
+\label{subsec:exchange_rate_discussion}
+
+The empirical analysis shows that a 1pp unexpected rate cut depreciates the Swiss franc by 4.53\% on impact in monthly local projections (Table~\ref{tab:lp_fx}), declining to 2.75\% at six months before converging to zero by twelve months. Daily event studies show similar depreciation effects of 4 to 5\% per pp shock on announcement days, confirming the directional finding at higher frequency. Hourly event studies for recent announcements (2020--2025) show higher intraday volatility around the announcement time of the policy change, though the limited sample (6 events) prevents reliable shock-scaled magnitude estimation at that frequency. The result is robust to alternative control specifications in monthly local projections (Appendix~\ref{app:robustness_controls}).
+
+
+The DSGE model also predicts CHF depreciation of approximately 1.2\% on impact (upscaled), moderating to 1.0\% at six months and 0.7\% by twelve months. Both theory and empirical evidence agree on direction: rate cuts depreciate the Swiss franc through conventional interest rate channels. However, the empirical magnitude is approximately 4 times larger than the theoretical prediction. Table~\ref{tab:fx_comparison} summarizes this comparison.
+
+\begin{table}[H]
+	\centering
+	\caption{EUR/CHF Response to 1pp Rate Cut: Theory vs. Evidence}
+	\label{tab:fx_comparison}
+	\small
+	\begin{threeparttable}
+		\begin{tabular}{@{}lccc@{}}
+			\toprule
+			\textbf{Source} & \textbf{Impact (1M)} & \textbf{6 Months} & \textbf{12 Months} \\
+			\midrule
+			Empirical (Pooled) & 4.53*** & 2.75** & 0.57 \\
+			& (1.47) & (1.30) & (2.01) \\
+			\midrule
+			DSGE (Upscaled) & 1.19 & 0.98 & 0.70 \\
+			\bottomrule
+		\end{tabular}
+		\begin{tablenotes}
+			\footnotesize
+			\item \textit{Notes:} DSGE: Full model. DSGE values are upscaled. $^{**}$p$<$0.05; $^{***}$p$<$0.01.
+		\end{tablenotes}
+	\end{threeparttable}
+\end{table}
+
+\subsubsection{Theoretical Mechanisms and Empirical Patterns}
+Two channels generate depreciation in the theoretical framework. First, lower real rates stimulate demand via the IS curve, raising the output gap. Second, the terms-of-trade equation links higher output gaps to depreciation through equation~\eqref{eq:tot}: $s_t = \sigma_\upsilon\tilde{y}_t$. Exchange rate leaning in the Taylor rule ($\phi_{\Delta e} = 0.15$) creates stabilizing feedback where anticipated depreciation triggers systematic policy tightening, partially dampening the depreciation response.
+
+The magnitude gap between theory and evidence suggests three factors. First, the model's incomplete pass-through calibration may underestimate actual pass-through speed during crisis periods when most rate cuts occur. Second, habit formation strength may overstate consumption smoothing behavior, leading to dampened output gap responses that limit exchange rate movements in the model. Third, the crisis concentration of rate cuts in the empirical sample may amplify conventional depreciation through elevated risk premia, financial stress, and portfolio rebalancing effects not captured in the steady-state DSGE calibration.
+
+Nevertheless, the directional agreement validates the NK framework's core predictions. But for Swiss monetary analysis, neither the DSGE model nor the empirical estimates provide fully definitive guidance on exchange rate transmission, given structural abstractions in the former and identification constraints in the latter (Section~\ref{subsec:limitations}).
+
+% -------------------------------------------------------------------------
+\subsection{Inflation Transmission}
+\label{subsec:inflation_discussion}
+In contrast to exchange rates, inflation transmission shows strong alignment between theory and evidence. The pooled empirical estimate is +0.14pp at impact, statistically insignificant and declining to $-$0.29pp by twelve months (Table~\ref{tab:lp_cpi}). The DSGE model predicts +0.27pp at impact, declining to +0.18pp at twelve months (upscaled). Table~\ref{tab:cpi_comparison} presents the comparison.
+
+\begin{table}[H]
+	\centering
+	\caption{CPI Inflation Response to 1pp Rate Cut: Theory vs. Evidence}
+	\label{tab:cpi_comparison}
+	\small
+	\begin{threeparttable}
+		\begin{tabular}{@{}lccc@{}}
+			\toprule
+			\textbf{Source} & \textbf{Impact (1M)} & \textbf{6 Months} & \textbf{12 Months} \\
+			\midrule
+			Empirical (Pooled) & +0.14 & +0.07 & $-$0.29 \\
+			& (0.29) & (0.44) & (0.58) \\
+			\midrule
+			DSGE (Upscaled) & +0.27 & +0.25 & +0.18 \\	
+			\bottomrule
+		\end{tabular}
+		\begin{tablenotes}
+			\footnotesize
+			\item \textit{Notes:} DSGE: Full model. Coefficients in pp, scaled in magnitude.
+		\end{tablenotes}
+	\end{threeparttable}
+\end{table}
+Both approaches predict minimal CPI effects. The DSGE overprediction (factors of 1.9–3.6) is statistically indistinguishable from zero given wide empirical CI.
+
+\subsubsection{Core Transmission Mechanisms}
+DSGE mechanisms explain muted inflation, and receive some empirical support. First, incomplete pass-through is the dominant mechanism. The calibrated 
+parameters imply that less than 10\% of exchange rate changes affect CPI 
+immediately. Second, habit formation with reduces interest rate sensitivity by 70\%, dampening demand responses. Third, interest rate smoothing creates gradual adjustment.
+
+Together, these mechanisms generate CPI responses less than half what would occur under full immediate pass-through. The close empirical match validates the structural specification for normal policy environments, confirming that the model captures dominant inflation determinants.
+
+% -------------------------------------------------------------------------
+\subsection{Regime-Dependent Transmission}
+\label{subsec:regime_discussion}
+
+The regime analysis reveals substantial differences in inflation transmission across interest rate environments. Under negative rates, rate cuts generate inflation increases of +1.23pp at impact, rising to +5.79pp at twelve months (Table~\ref{tab:lp_cpi_regime}), both highly significant. Under positive rates, responses remain near zero and insignificant. Table~\ref{tab:regime_comparison} presents the comparison.
+
+\begin{table}[H]
+	\centering
+	\caption{Regime Comparison: CPI Inflation Response to 1pp Rate Cut}
+	\label{tab:regime_comparison}
+	\small
+	\begin{threeparttable}
+		\begin{tabular}{@{}lcccc@{}}
+			\toprule
+			& \multicolumn{2}{c}{\textbf{Empirical}} & \multicolumn{2}{c}{\textbf{DSGE (Upscaled)}} \\
+			\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+			\textbf{Horizon} & Positive & Negative & Regime A & Regime B \\
+			\midrule
+			1 month & +0.07 & +1.23*** & +0.27 & +0.29 \\
+			& (0.29) & (0.14) & & \\
+			12 months & $-$0.66 & +5.79*** & +0.18 & +0.20 \\
+			& (0.46) & (0.93) & & \\
+			\midrule
+			Difference (12M) & \multicolumn{2}{c}{+6.45***} & \multicolumn{2}{c}{+0.02} \\
+			\bottomrule
+		\end{tabular}
+		\begin{tablenotes}
+			\footnotesize
+			\item \textit{Notes:} $^{***}$p$<$0.01.
+		\end{tablenotes}
+	\end{threeparttable}
+\end{table}
+
+The DSGE model shows minimal regime differences (+0.02pp at twelve months) because it varies only Taylor rule coefficients while holding all structural parameters constant. Linear parameter adjustments cannot generate the 6.45pp empirical difference.
+
+\subsubsection{The January 2015 Floor Removal Episode}
+The regime dependence requires careful interpretation as the negative-rate period contains only two rate cuts. They both coinciding with the January 2015 EUR/CHF floor removal, when the Swiss franc appreciated 15 to 20\% within hours. The magnitude of the exchange rate shock far exceeded typical variation, potentially overwhelming distribution margins that normally absorb gradual movements. The one-time adjustment in import prices following the floor removal created a discrete CPI jump not well-represented by gradual pass-through. Heightened uncertainty during the crisis may have furhter temporarily increased pass-through, violating the time-invariant parameter assumption.
+
+Linear DSGE frameworks cannot capture such discrete structural breaks. The model's regime comparison varies policy rule parameters but maintains constant household preferences, price stickiness, and pass-through. While Wald tests reject equality at all horizons, this result likely reflects the exceptional nature of the floor removal rather than general negative-rate transmission, limiting generalizability to other contexts or time periods.
+
+% -------------------------------------------------------------------------
+\subsection{Findings in Literature Context}
+\label{subsec:literature_comparison}
+This section compares the empirical findings with existing evidence on Swiss 
+monetary transmission. The comparison is organized around key results for exchange rate responses, inflation transmission, and regime-dependent effects. An important caveat is that most existing studies analyze monetary tightening (rate hikes) rather than easing (rate cuts), limiting direct comparability.
+
+\subsubsection{Exchange Rate Responses}
+Empirical evidence on monetary tightening shows systematic currency appreciation. High-frequency identification confirms this pattern: \citet{fink2024} find approximately 2\% Swiss franc appreciation on the same day for 1pp tightening using daily data (2000--2011) and identification through heteroskedasticity that accounts for simultaneity between exchange rates and interest rates, demonstrating that simpler methods yield biased estimates. \citet{kearns2006} document similar immediate appreciation for other SOE using intraday data. Early VAR studies (\citealt{eichenbaum1995}, \citealt{kim2000}) established this pattern for developed countries using structural identification.
+
+However, this conventional transmission is not universal. \citet{hnatkovska2012} document an "exchange rate response puzzle": while developed country currencies systematically appreciate following tightening as theory predicts, developing countries show no systematic appreciation or even depreciation. Using multiple identification strategies, they find that structural characteristics, particularly differences in liquidity demand, fiscal effects, and output responses, can dominate conventional transmission channels. \citet{bjornland2009} demonstrate that identification method critically determines measured exchange rate responses, paralleling the challenges in this thesis of isolating pure policy effects from crisis dynamics.
+
+Research on safe-haven currencies documents that the Swiss franc can appreciate during global uncertainty episodes independently of monetary policy (\citealt{ranaldo2010}, \citealt{grisse2015}, \citealt{habib2012}). 
+
+\paragraph{Synthesis.}
+Direct comparison with literature requires assuming symmetric transmission. Under this assumption, high-frequency evidence on tightening implies similar depreciation during easing, consistent with DSGE predictions through conventional channels. The empirical finding of 4.5\% depreciation confirms these predictions directionally but exceeds predicted magnitudes. This amplification suggests either transmission asymmetry where easing generates stronger responses than tightening, or monthly identification capturing crisis-period effects that exceed immediate high-frequency responses (Section~\ref{subsec:limitations}).
+
+\subsubsection{Inflation Transmission}
+Existing evidence finds weak inflation responses to monetary shocks in both 
+directions. DSGE models calibrated to Swiss data predict symmetric modest 
+effects below 0.5pp by construction (\citealt{cuchecurti2009}, \citealt{rudolf2014}, \citealt{baurle2014}).
+
+Empirical evidence confirms these weak effects. International evidence supports muted inflation responses in open economies with credible inflation targeting: \citet{mccarthy2007} document incomplete exchange rate pass-through to consumer prices in advanced economies. Additionally, \citet{campa2005} show that pass-through into import prices is partial across OECD countries and has declined in many cases, primarily reflecting shifts in import composition.
+
+\paragraph{Synthesis.}
+Assuming symmetric transmission, literature evidence on tightening implies that rate cuts should generate small positive inflation effects of similar magnitude. DSGE models predict symmetric responses below 0.5pp by construction, with the model in Section~\ref{sec:dsge} generating comparable magnitudes. The weak pooled inflation effects in Section~\ref{subsec:inflation_discussion} align with these predictions, appearing to reflect that incomplete pass-through limits transmission in both directions. This consistency across theoretical and empirical approaches suggests inflation dynamics are successfully captured despite frequency limitations.
+
+\subsubsection{Regime-Dependent Transmission}
+Evidence on transmission differences between positive and negative rate 
+environments remains limited and mixed. \citet{borio2017} argue that monetary 
+effectiveness weakens near zero due to bank profitability constraints, though 
+their evidence comes primarily from comparison across different monetary regimes rather than within-country regime changes. \citet{ecb2021} review European experience and find limited support for substantially different transmission under negative rates once complementary policies are considered. 
+
+DSGE models with regime-varying parameters generate minimal regime differences, as shown in Section~\ref{sec:dsge}. \citet{baurle2014} vary policy rule coefficients and study transmission when the ZLB binds versus when it does not, finding that responses become more persistent at the ZLB but producing modest differences reflecting the theoretical constraint that linear frameworks cannot fully capture discrete structural breaks.
+
+\paragraph{Synthesis.}
+Even assuming symmetric transmission between tightening and easing, the regime-dependent inflation asymmetries documented in Section~\ref{subsec:regime_discussion} substantially exceed existing evidence. As reviewed above, prior studies find at most limited transmission differences under negative rates, while DSGE models with regime-varying parameters generate only modest differences by construction. Moreover, no existing study examines transmission when rate cuts coincide with discrete structural breaks like the 2015 EUR/CHF floor removal episode (Section~\ref{subsec:regime_discussion}). This prevents assessing whether the empirical findings reflect general negative-rate properties or dynamics specific to this unique episode.
+
+% -------------------------------------------------------------------------
+\subsection{Limitations}
+\label{subsec:limitations}
+The empirical analysis faces fundamental identification constraints arising from monthly data frequency and limited sample size. This section evaluates several key endogeneity concerns in monetary policy identification: simultaneity bias, information effects, and predictability from observables. Furthermore it is discussed, how the purging regression approach addresses or fails to address each constraint.
+
+\subsubsection{The Endogeneity Problem}
+Identifying causal effects of monetary policy requires isolating truly exogenous variation in policy decisions. As emphasized by \citet{nakamura2018} and \citet{miranda2019}, this is challenging because central bank decisions are fundamentally endogenous: they respond systematically to economic conditions while simultaneously affecting those conditions through multiple transmission channels.
+
+The following distinct endogeneity concerns arise in the Swiss context:
+
+\textit{Simultaneity bias}: the SNB adjusts policy rates in response to exchange rate movements through systematic exchange rate leaning, while exchange rates respond to policy decisions. This creates bidirectional causality at intraday or daily frequency.
+
+\textit{Information effects}: SNB announcements may reveal the central bank's private assessment of economic conditions beyond the policy action itself. When the SNB cuts rates unexpectedly, markets must separate whether this signals (a) an exogenous policy easing, (b) revelation of worse-than-expected economic conditions, or (c) signals about future policy intentions. As shown by \citet{jarocinski2020} and \citet{cieslak2019}, failing to separate these components can substantially bias estimates of monetary transmission. 
+
+\textit{Predictability from observables}: if the SNB responds systematically to publicly available data not included in the control set, the estimated shock will partly capture these omitted systematic responses rather than pure policy innovations. 
+
+\subsubsection{Purging Regression Approach: Strengths and Limitations}
+The purging regression partially addresses the predictability concern but cannot resolve simultaneity or information effects. The specification operates at monthly frequency, removing the component of policy decisions predictable from lagged inflation and business cycle conditions, where all variables are measured at monthly frequency and both control variables are lagged one month.  The applied method has three defining features. First, it allows comprehensive coverage of the full 2000--2025 sample period. Second, monthly macroeconomic indicators (CPI, KOF) capture systematic policy responses to fundamental economic conditions that high-frequency financial data may miss. Third, the approach generates shocks for all 19 rate cut events in the sample with available control data.
+
+However, several important limitations result from the monthly frequency relative to high-frequency identification strategies. 
+
+\textit{Simultaneity remains unaddressed}: The purging regression cannot account for feedback from exchange rates to policy decisions within the announcement window. Policy announcements occur at specific times, and exchange rates adjust within minutes. The SNB may respond to these intraday movements through systematic exchange rate leaning, while forward-looking markets anticipate such responses. Monthly aggregation masks this high-frequency simultaneity entirely. The likely direction of bias is attenuation: if intraday Swiss franc depreciation triggers larger rate cuts (SNB leaning against depreciation), the estimated depreciation per unit of unexpected cut understates the true causal effect. However, simultaneity could also create amplification bias under certain conditions. Without high-frequency data, this ambiguity cannot be resolved.
+
+\textit{Information effects not separated}: The monthly purging regression cannot distinguish pure policy shocks from information revelation. High-frequency identification within narrow event windows can partially isolate pure policy shocks before information diffusion, but monthly frequency data aggregate across the entire month, making such separation impossible. Language-based identification approaches could partially separate these channels even with lower-frequency data by extracting text-driven surprises from central bank communications.
+
+\textit{Incomplete control set}: The low $R^2$ indicates that lagged CPI and KOF explain only 10\% of monthly policy variation. Potential omitted variables include real-time inflation expectations, high-frequency labor market indicators, financial stability concerns, global risk sentiment, and SNB forecasts unavailable to researchers. The direction and magnitude of resulting bias depends on correlations between omitted variables and included controls. The data-driven control selection via Random Forest importance helps mitigate specification uncertainty by identifying the most predictive available indicators, but cannot overcome fundamental data limitations.
+
+\subsubsection{Conceptual Differences in Shock Interpretation}
+The DSGE and empirical frameworks employ fundamentally different shock concepts. The theoretical model simulates responses to exogenous monetary innovations $\nu_t$ constructed as pure policy surprises independent of economic conditions. The empirical approach identifies shocks as residuals from the purging regression with a low $R^2$, meaning $\varepsilon_t$ just captures policy variation unexplained by lagged CPI and KOF rather than truly exogenous innovations. This residual likely includes systematic responses to financial stress, exchange rate pressures, and information revelation effects where announcements signal the central bank's private assessment. The conceptual mismatch limits direct comparison: DSGE responses reflect counterfactual exogenous changes, while empirical estimates reflect historical associations in crisis environments that may magnify conventional depreciation beyond steady-state predictions.
+
+\subsubsection{Implications for Result Interpretation}
+
+Given identification constraints from monthly frequency, limited sample size, and data access limitations, the empirical results should be interpreted as reduced-form associations rather than fully structural exogenous shocks.
+
+
+For exchange rates, the estimated depreciation confirms conventional transmission channels. The magnitude may be biased in either direction by simultaneity: if the SNB systematically leans against depreciation, the measured response understates true depreciation; conversely, if crisis-period cuts coincide with elevated risk premia that amplify depreciation, the estimate may overstate typical responses. 
+
+For inflation, the absence of pooled effects could reflect either weak transmission through incomplete pass-through (validated by the DSGE model) or identification failure from information effects. Monthly frequency prevents separating these interpretations. The conservative interpretation is that rate cuts do not reliably generate measurable inflation increases under normal conditions.
+
+For regime differences, the large discrepancy is statistically robust but causally ambiguous. With only two negative-rate cuts coinciding with the floor removal, these differences could reflect true regime dependence, episode-specific effects, or information heterogeneity. Furthermore, the small sample prevents causal attribution to negative rates.
+
+Robustness checks provide confirmation. Results hold across alternative control specifications (Appendix~\ref{app:robustness_controls}), and regime differences strengthen when using only predetermined variables. The directional consistency across specifications validates conventional transmission mechanisms, though precise magnitudes remain uncertain due to identification constraints.
+% -------------------------------------------------------------------------
+\subsection{Summary of Findings}
+\label{subsec:answer_rq}
+\subsubsection{Research Question 1}
+\textit{What is the effect of an unexpected SNB rate cut on (i) the EUR/CHF exchange rate and (ii) Swiss inflation between 2000 and 2025?}
+
+\textbf{Exchange Rate.} Rate cuts depreciate the Swiss franc (EUR/CHF increases) by approximately 4.5\% per pp shock at impact, declining to 2.75\% at six months. This confirms the theoretical model's directional prediction but exceeds the magnitude. Crisis-period concentration likely amplifies depreciation through risk premia effects not captured in steady-state calibration. The finding holds across daily and monthly specifications, though monthly frequency prevents addressing simultaneity bias, suggesting uncertainty about the precise magnitude.
+\newpage
+\textbf{Inflation.} Under positive rates, rate cuts produce no measurable CPI response. This may reflect incomplete pass-through, strong habits, and interest rate smoothing, and aligns with evidence on weak inflation transmission in open economies with credible inflation targeting. Under negative rates, the two cuts during the 2015 floor removal generated large responses but may just reflect that extraordinary episode rather than general negative-rate properties.
+
+\subsubsection{Research Question 2}
+\textit{Can the transmission mechanisms of a Swiss-calibrated DSGE model be empirically validated using structural identification combined with machine-learning methods?}
+
+The findings show partial validation. For inflation, the model successfully replicates empirical transmission. For exchange rates, directional predictions are confirmed, but empirical magnitudes exceed theoretical predictions.
+
+Machine learning methods enhance control variable selection and detect treatment heterogeneity but cannot overcome fundamental identification constraints from monthly frequency and limited sample size.
+
+% ========================================================================
+% SECTION 6: CONCLUSION
+% ========================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+This thesis examined Swiss monetary policy transmission by comparing a Swiss-calibrated SOE DSGE model with empirical evidence based on purging regression identification and local projections over 2000 to 2025. 
+
+The analysis yields three main conclusions. First, SNB rate cuts generate Swiss franc depreciation (EUR/CHF increases) of approximately 4.5\% per pp shock, confirming theoretical predictions directionally but exceeding model magnitudes. This magnitude gap suggests stronger transmission during crisis episodes than steady-state calibration captures. Second, inflation transmission shows strong alignment between theory and evidence, with both approaches yielding minimal pooled effects that validate core NK mechanisms. These weak inflation effects align with international evidence on muted transmission in open economies with credible inflation targeting. Third, regime-dependent transmission exhibits large asymmetries substantially exceeding existing evidence, with negative-rate cuts generating substantial inflation increases while positive-rate cuts produce no measurable effects, though this likely reflects the extraordinary 2015 floor removal rather than general negative-rate properties.
+
+The empirical analysis faces fundamental identification constraints. The monthly-frequency purging regression cannot address intraday simultaneity or separate policy shocks from information effects, with low explanatory power. Small sample size severely constrains regime analysis, with only two negative-rate cuts coinciding with the January 2015 floor removal, limiting generalizability. Machine learning methods enhance robustness through data-driven control selection and heterogeneity detection but cannot overcome these fundamental constraints. Results should be interpreted as reduced-form associations rather than fully structural causal effects.
+
+Three implications emerge for monetary policy in SOE. First, rate cuts produce conventional depreciation effects, though magnitudes are larger during crisis periods than steady-state models predict. Second, weak pass-through limits inflation generation through interest rates alone, requiring patient policy persistence or complementary tools. Third, extraordinary episodes like the 2015 floor removal require flexible frameworks beyond conventional rules, as linear models cannot capture discrete structural breaks.
+
+Future research should address identified limitations through high-frequency identification using Swiss futures data where available, language-based approaches extracting text-driven surprises from SNB communications to separate policy shocks from information effects, DSGE frameworks incorporating time-varying risk premia and regime-switching mechanisms to capture crisis amplification, and cross-country analysis across SOE with negative-rate experience to assess generalizability. Despite current limitations, the thesis confirms that standard NK mechanisms capture both exchange rate direction and inflation dynamics under normal conditions while revealing important magnitude gaps requiring crisis-period modeling extensions.
+
+\newpage
+% =========================================================================
+% REFERENCES
+% =========================================================================
+\section*{References}
+\begingroup
+\renewcommand{\section}[2]{}
+\bibliography{ref5.bib}
+\endgroup
+
+\newpage
+
+% =========================================================================
+% APPENDICES
+% =========================================================================
+\begin{appendices}
+\renewcommand{\thesection}{A.\arabic{section}}
+% -------------------------------------------------------------------------
+% APPENDIX A.1: COMPUTATIONAL CODE
+% -------------------------------------------------------------------------
+
+\section{Dynare Code: Swiss DSGE Model}
+\label{app:dynare_code}
+
+This appendix documents the complete computational implementation used in this thesis. Due to the extensive length of the code files, they are provided separately as digital supplements rather than printed in this appendix.
+
+\subsection{Dynare Implementation}
+\label{app:dynare_implementation}
+
+The complete Dynare code implementing the Swiss SOE DSGE model described in Section~\ref{sec:dsge} is provided in the file \texttt{swiss\_dsge\_model.mod}. The code features:
+
+\begin{itemize}
+	\item Modular design with switches to activate/deactivate model extensions
+	\item Swiss-specific calibration parameters
+	\item Multiple model specifications: baseline Gali model, Swiss extensions, and regime-dependent variants
+	\item Complete implementation of habit formation, interest rate smoothing, price indexation, incomplete exchange rate pass-through, and exchange rate leaning
+	\item Regime-dependent monetary policy rules for positive and negative interest rate periods
+\end{itemize}
+
+The code is fully functional and replicates all IRF presented in Chapter~\ref{sec:dsge}. Users can modify the configuration switches at the top of the file to test different model specifications.
+\newpage
+\subsection{R Implementation: Empirical Analysis}
+\label{app:r_implementation}
+
+The complete empirical analysis presented in Chapter~\ref{sec:empirical} is implemented across multiple R scripts provided as digital supplements:
+
+\begin{itemize}
+	\item \texttt{01\_data\_loading.R}: Data import, cleaning, and preparation
+	\item \texttt{02\_data\_description.R}: Descriptive statistics and visualization
+	\item \texttt{03\_shock\_identification.R}: Purging regression and shock identification
+	\item \texttt{04\_event\_studies.R}: Daily and hourly event study analysis
+	\item \texttt{05\_local\_projections.R}: Local projection impulse response functions
+	\item \texttt{06\_regime\_analysis.R}: Regime-dependent transmission analysis
+	\item \texttt{07\_machine\_learning.R}: Random Forest and Causal Forest analysis
+	\item \texttt{Robustness.R}: Robustness checks for control variable sensitivity
+\end{itemize}
+
+All scripts are fully documented and reproduce the tables and figures presented in the empirical analysis. 
+
+\textbf{Data Availability:} The complete datasets used in this analysis are available upon request for replication and verification purposes. 
+
+
+\newpage
+
+% -------------------------------------------------------------------------
+% APPENDIX A.2: COMPLETE MODEL DERIVATIONS
+% -------------------------------------------------------------------------
+\section{Model Derivations}
+\label{app:model_derivations}
+
+% =========================================================================
+% HOUSEHOLD PROBLEM
+% =========================================================================
+\subsection{Household Problem (Baseline)}
+\label{app:household}
+
+\paragraph{Utility and Budget Constraint.}
+The representative household maximizes lifetime utility:
+\begin{equation}
+	\max_{C_t, N_t, B_t} \, E_0 \sum_{t=0}^\infty \beta^t \left[ \frac{C_t^{1-\sigma}}{1-\sigma} - \frac{N_t^{1+\varphi}}{1+\varphi} \right],
+	\label{eq:app_utility_baseline}
+\end{equation}
+where $C_t$ is consumption, $N_t$ labor supply, $\beta \in (0,1)$ the discount factor, $\sigma > 0$ the inverse IES, and $\varphi > 0$ the inverse Frisch elasticity of labor supply.
+
+Budget constraint:
+\begin{equation}
+	P_{C,t} C_t + \frac{B_t}{1+i_t} \leq B_{t-1} + W_t N_t + \Pi_t,
+	\label{eq:app_budget}
+\end{equation}
+where $P_{C,t}$ is the CPI, $B_t$ nominal bond holdings, $i_t$ the nominal interest rate, $W_t$ the nominal wage, and $\Pi_t$ profit transfers from firms.
+
+\paragraph{Lagrangian.}
+Form the Lagrangian with multiplier $\lambda_t$ on the budget constraint:
+\begin{multline}
+	\mathcal{L} = E_0 \sum_{t=0}^\infty \beta^t \Bigg\{ \frac{C_t^{1-\sigma}}{1-\sigma} - \frac{N_t^{1+\varphi}}{1+\varphi} \\
+	+ \lambda_t \left[ B_{t-1} + W_t N_t + \Pi_t - P_{C,t} C_t - \frac{B_t}{1+i_t} \right] \Bigg\}.
+	\label{eq:app_lagrangian}
+\end{multline}
+
+\paragraph{First-Order Conditions.}
+\begin{align}
+	[C_t]: \quad & C_t^{-\sigma} = \lambda_t P_{C,t}, \label{eq:app_foc_C_baseline} \\
+	[N_t]: \quad & N_t^\varphi = \lambda_t W_t, \label{eq:app_foc_N} \\
+	[B_t]: \quad & \frac{\lambda_t}{1+i_t} = \beta E_t \lambda_{t+1}. \label{eq:app_foc_B}
+\end{align}
+
+\paragraph{Consumption Euler Equation.}
+From \eqref{eq:app_foc_C_baseline}: $\lambda_t = C_t^{-\sigma}/P_{C,t}$ and $\lambda_{t+1} = C_{t+1}^{-\sigma}/P_{C,t+1}$.
+
+Substitute into bond FOC \eqref{eq:app_foc_B}:
+\begin{equation}
+	\frac{C_t^{-\sigma}}{P_{C,t}(1+i_t)} = \beta E_t \left[ \frac{C_{t+1}^{-\sigma}}{P_{C,t+1}} \right].
+	\label{eq:app_euler_levels_baseline}
+\end{equation}
+
+Both sides multiplied by $P_{C,t}$:
+\begin{equation}
+	\frac{C_t^{-\sigma}}{1+i_t} = \beta E_t \left[ C_{t+1}^{-\sigma} \frac{P_{C,t}}{P_{C,t+1}} \right].
+	\label{eq:app_euler_simplified}
+\end{equation}
+
+Define gross inflation $\Pi_{C,t+1} = P_{C,t+1}/P_{C,t}$:
+\begin{equation}
+	C_t^{-\sigma} = \beta(1+i_t) E_t \left[ C_{t+1}^{-\sigma} \Pi_{C,t+1}^{-1} \right].
+	\label{eq:app_euler_inflation}
+\end{equation}
+
+\paragraph{Steady State.}
+In the deterministic steady state with zero inflation: $\bar{C}_t = \bar{C}$, $\bar{\Pi}_C = 1$.
+
+From \eqref{eq:app_euler_inflation}:
+\begin{equation}
+	\bar{C}^{-\sigma} = \beta(1+\bar{i}) \bar{C}^{-\sigma}.
+\end{equation}
+
+Therefore:
+\begin{equation}
+	\beta(1+\bar{i}) = 1 \quad \Rightarrow \quad 1+\bar{i} = \beta^{-1}.
+	\label{eq:app_steady_state}
+\end{equation}
+
+\paragraph{Log-Linearization.}
+Log deviations from steady state are defined as: $c_t = \log C_t - \log \bar{C}$, $\pi_{C,t} = p_{C,t} - p_{C,t-1}$ where $p_{C,t} = \log P_{C,t}$.
+
+First-order Taylor expansion of \eqref{eq:app_euler_inflation} around steady state:
+\begin{equation}
+	1 - \sigma c_t = \beta(1+\bar{i})[1 + i_t - \sigma E_t c_{t+1} - E_t\pi_{C,t+1}].
+\end{equation}
+
+Using $\beta(1+\bar{i}) = 1$:
+\begin{equation}
+	1 - \sigma c_t = 1 + i_t - \sigma E_t c_{t+1} - E_t\pi_{C,t+1}.
+\end{equation}
+
+Simplified:
+\begin{equation}
+	\sigma c_t = \sigma E_t c_{t+1} - (i_t - E_t\pi_{C,t+1}).
+	\label{eq:app_euler_log}
+\end{equation}
+
+\paragraph{Natural Rate and Output Gap.}
+The natural level of consumption is defined as $c_t^n$ which is the level that would prevail under flexible prices. The consumption gap is $\tilde{c}_t = c_t - c_t^n$.
+
+The natural real interest rate $r_t^n$ satisfies:
+\begin{equation}
+	\sigma c_t^n = \sigma E_t c_{t+1}^n - r_t^n.
+\end{equation}
+
+Subtracting this from \eqref{eq:app_euler_log}:
+\begin{equation}
+	\sigma \tilde{c}_t = \sigma E_t \tilde{c}_{t+1} - (i_t - E_t\pi_{C,t+1} - r_t^n).
+\end{equation}
+
+\paragraph{Market Clearing and IS Curve.}
+With market clearing $C_t = Y_t$, we have $\tilde{c}_t = \tilde{y}_t$:
+\begin{equation}
+	\boxed{\tilde{y}_t = E_t\tilde{y}_{t+1} - \frac{1}{\sigma}(i_t - E_t\pi_{H,t+1} - r_t^n)}
+	\label{eq:app_IS_baseline}
+\end{equation}
+
+Note: In the open-economy model, expected inflation enters as domestic inflation $E_t\pi_{H,t+1}$ and $\sigma$ is replaced by the composite parameter $\sigma_\upsilon$ (see Appendix~\ref{app:composite_params}). The baseline IS curve is:
+\begin{equation}
+	\tilde{y}_t = E_t\tilde{y}_{t+1} - \frac{1}{\sigma_\upsilon}(i_t - E_t\pi_{H,t+1} - r_t^n).
+	\label{eq:app_IS_baseline_final}
+\end{equation}
+
+% =========================================================================
+% FIRM PROBLEM
+% =========================================================================
+\subsection{Firm Problem (Baseline)}
+\label{app:firms}
+
+\paragraph{Production Technology.}
+Each firm $i \in [0,1]$ produces a differentiated good using linear technology:
+\begin{equation}
+	Y_t(i) = A_t N_t(i),
+	\label{eq:app_production}
+\end{equation}
+where $Y_t(i)$ is firm $i$'s output, $A_t$ is aggregate total factor productivity, and $N_t(i)$ is firm $i$'s labor input.
+
+\paragraph{Demand for Firm's Output.}
+Each firm faces a downward-sloping demand curve:
+\begin{equation}
+	Y_t(i) = \left(\frac{P_t(i)}{P_{H,t}}\right)^{-\varepsilon} Y_t,
+	\label{eq:app_demand}
+\end{equation}
+where $P_t(i)$ is firm $i$'s price, $P_{H,t}$ is the aggregate domestic price index, $\varepsilon > 1$ is the elasticity of substitution between differentiated varieties, and $Y_t$ is aggregate demand for domestic goods.
+
+\paragraph{Real Marginal Cost.}
+From the production function and labor market equilibrium, real marginal cost (in units of domestic goods) is:
+\begin{equation}
+	MC_t = \frac{W_t}{P_{H,t} A_t}.
+	\label{eq:app_mc}
+\end{equation}
+
+Log-linearizing: $mc_t = w_t - p_{H,t} - a_t$, where lowercase denotes logs.
+
+From the household's labor supply FOC \eqref{eq:app_foc_N} combined with market clearing $n_t = y_t - a_t$ and $c_t = y_t$:
+\begin{equation}
+	mc_t = \left(\varphi + \frac{\sigma}{1-h}\right)\tilde{y}_t + \text{terms independent of policy (t.i.p.)}.
+	\label{eq:app_mc_gap}
+\end{equation}
+
+\paragraph{Calvo Price Stickiness.}
+Each period only a fraction $1-\theta$ of firms can adjust their price. The remaining fraction $\theta$ must keep their price unchanged. The parameter $\theta \in [0,1)$ measures the degree of nominal rigidity: higher $\theta$ implies longer average price duration of $1/(1-\theta)$ quarters.
+
+\paragraph{Firm's Pricing Problem.}
+A firm that can reoptimize at time $t$ chooses its reset price $P_t^*$ to maximize the expected present value of profits over all future periods in which this price may still be in effect:
+\begin{equation}
+	\max_{P_t^*} \, E_t \sum_{k=0}^\infty (\beta\theta)^k \Lambda_{t,t+k} \left[ \frac{P_t^*}{P_{H,t+k}} Y_{t+k}(i) - MC_{t+k} Y_{t+k}(i) \right],
+	\label{eq:app_firm_profit}
+\end{equation}
+subject to the demand curve \eqref{eq:app_demand}, where:
+\begin{itemize}
+	\item $(\beta\theta)^k$ = probability the price set at $t$ is still in effect at $t+k$,
+	\item $\Lambda_{t,t+k} = \beta^k (C_{t+k}/C_t)^{-\sigma} (P_{C,t}/P_{C,t+k})$ = stochastic discount factor (household's marginal rate of substitution),
+	\item $MC_{t+k}$ = real marginal cost at time $t+k$.
+\end{itemize}
+
+\paragraph{First-Order Condition.}
+Substituting the demand curve \eqref{eq:app_demand} into the profit function and taking the derivative with respect to $P_t^*$:
+\begin{equation}
+	E_t \sum_{k=0}^\infty (\beta\theta)^k \Lambda_{t,t+k} Y_{t+k} \left(\frac{P_t^*}{P_{H,t+k}}\right)^{-\varepsilon} \left[ \frac{P_t^*}{P_{H,t+k}} - \frac{\varepsilon}{\varepsilon-1} MC_{t+k} \right] = 0.
+	\label{eq:app_foc_firm}
+\end{equation}
+
+Rearranging:
+\begin{equation}
+	\frac{P_t^*}{P_{H,t}} = \frac{\varepsilon}{\varepsilon-1} \frac{E_t \sum_{k=0}^\infty (\beta\theta)^k \Lambda_{t,t+k} MC_{t+k} Y_{t+k} (P_{H,t}/P_{H,t+k})^{\varepsilon}}
+	{E_t \sum_{k=0}^\infty (\beta\theta)^k \Lambda_{t,t+k} Y_{t+k} (P_{H,t}/P_{H,t+k})^{\varepsilon-1}}.
+	\label{eq:app_optimal_price}
+\end{equation}
+
+The optimal reset price is a markup $\mu = \varepsilon/(\varepsilon-1)$ over a weighted average of current and expected future real marginal costs.
+
+\paragraph{Aggregate Price Index.}
+With Calvo pricing, the aggregate domestic price index evolves as:
+\begin{equation}
+	P_{H,t}^{1-\varepsilon} = \theta P_{H,t-1}^{1-\varepsilon} + (1-\theta)(P_t^*)^{1-\varepsilon}.
+	\label{eq:app_price_index}
+\end{equation}
+
+Taking logs and linearizing around $\bar{P}_t^* = \bar{P}_{H,t}$:
+\begin{equation}
+	0 = \theta(-\pi_{H,t}) + (1-\theta)(p_t^* - p_{H,t}),
+	\label{eq:app_price_index_log}
+\end{equation}
+where $p_t^* = \log P_t^*$ and $\pi_{H,t} = p_{H,t} - p_{H,t-1}$.
+
+Solving for the log reset price:
+\begin{equation}
+	p_t^* - p_{H,t} = \frac{\theta}{1-\theta}\pi_{H,t}.
+	\label{eq:app_reset_price}
+\end{equation}
+
+\paragraph{Log-Linearization of Optimal Price.}
+Taking logs of \eqref{eq:app_optimal_price} and linearizing around steady state with $\bar{\Lambda} = 1$, $\bar{Y} = Y$, $\bar{MC} = (\varepsilon-1)/\varepsilon$:
+\begin{equation}
+	p_t^* - p_{H,t} = (1-\beta\theta) \sum_{k=0}^\infty (\beta\theta)^k E_t [mc_{t+k} + k\pi_{H,t+1}^{t+k}],
+	\label{eq:app_reset_price_mc}
+\end{equation}
+where $\pi_{H,t+1}^{t+k} = \sum_{j=1}^k \pi_{H,t+j}$ denotes cumulative inflation from $t+1$ to $t+k$.
+
+\paragraph{Deriving the NKPC.}
+Substituting \eqref{eq:app_reset_price} into \eqref{eq:app_reset_price_mc}:
+\begin{equation}
+	\frac{\theta}{1-\theta}\pi_{H,t} = (1-\beta\theta) \sum_{k=0}^\infty (\beta\theta)^k E_t [mc_{t+k} + k\pi_{H,t+1}^{t+k}].
+	\label{eq:app_nkpc_derivation}
+\end{equation}
+
+Advance one period:
+\begin{equation}
+	\frac{\theta}{1-\theta}\pi_{H,t+1} = (1-\beta\theta) \sum_{k=0}^\infty (\beta\theta)^k E_{t+1} [mc_{t+1+k} + k\pi_{H,t+2}^{t+1+k}].
+\end{equation}
+
+Taking expectations at $t$ and multiplying by $\beta\theta$:
+\begin{equation}
+	\frac{\beta\theta^2}{1-\theta}E_t\pi_{H,t+1} = \beta\theta(1-\beta\theta) E_t \sum_{k=0}^\infty (\beta\theta)^k [mc_{t+1+k} + k\pi_{H,t+2}^{t+1+k}].
+\end{equation}
+
+Subtracting from \eqref{eq:app_nkpc_derivation}:
+\begin{equation}
+	\frac{\theta}{1-\theta}(\pi_{H,t} - \beta\theta E_t\pi_{H,t+1}) = (1-\beta\theta) mc_t.
+\end{equation}
+
+Multiplying both sides by $(1-\theta)/\theta$:
+\begin{equation}
+	\pi_{H,t} - \beta\theta E_t\pi_{H,t+1} = \frac{(1-\theta)(1-\beta\theta)}{\theta} mc_t.
+\end{equation}
+
+Rearranging:
+\begin{equation}
+	\pi_{H,t} = \beta E_t\pi_{H,t+1} + \lambda mc_t, \quad \lambda = \frac{(1-\theta)(1-\beta\theta)}{\theta}.
+	\label{eq:app_NKPC_mc}
+\end{equation}
+
+\paragraph{Baseline NKPC in Terms of Output Gap.}
+Substituting real marginal cost from \eqref{eq:app_mc_gap}:
+\begin{equation}
+	\boxed{\pi_{H,t} = \beta E_t\pi_{H,t+1} + \kappa_\upsilon\tilde{y}_t}
+	\label{eq:app_NKPC_baseline}
+\end{equation}
+where $\kappa_\upsilon = \lambda(\sigma_\upsilon + (\varphi+\alpha)/(1-\alpha))$ with composite parameters defined in Appendix~\ref{app:composite_params}.
+
+% =========================================================================
+% EXTENSION: PRICE INDEXATION
+% =========================================================================
+\subsection{Extension: Price Indexation}
+\label{app:indexation}
+
+\paragraph{Indexation Mechanism.}
+The baseline Calvo framework is extended to allow for partial indexation to past inflation. Firms that cannot reoptimize at time $t$ (the fraction $\theta$) do not keep their price completely fixed. Instead, they adjust their price mechanically according to:
+\begin{equation}
+	P_t(i) = P_{t-1}(i) \times \Pi_{H,t-1}^\gamma,
+	\label{eq:app_indexation_rule}
+\end{equation}
+where $\Pi_{H,t-1} = P_{H,t-1}/P_{H,t-2}$ is lagged domestic inflation and $\gamma \in [0,1]$ is the indexation parameter.
+
+When $\gamma = 0$: No indexation (baseline Calvo).
+When $\gamma = 1$: Full indexation to past inflation.
+When $\gamma \in (0,1)$: Partial indexation.
+
+\paragraph{Modified Price Index.}
+The aggregate price index becomes:
+\begin{equation}
+	P_{H,t}^{1-\varepsilon} = \theta (P_{H,t-1}\Pi_{H,t-1}^\gamma)^{1-\varepsilon} + (1-\theta)(P_t^*)^{1-\varepsilon}.
+	\label{eq:app_price_index_indexation}
+\end{equation}
+
+\paragraph{Hybrid NKPC.}
+Log-linearizing the modified pricing conditions and iterating forward yields the hybrid New Keynesian Phillips Curve:
+\begin{equation}
+	\boxed{\pi_{H,t} = \gamma\pi_{H,t-1} + (1-\gamma)\beta E_t\pi_{H,t+1} + \kappa_\upsilon\tilde{y}_t}
+	\label{eq:app_NKPC_hybrid}
+\end{equation}
+
+The slope coefficient also changes:
+\begin{equation}
+	\kappa_\upsilon = \frac{(1-\theta)(1-\beta\theta)}{\theta(1+\gamma\varepsilon)} \cdot (\sigma_\upsilon + \frac{\varphi+\alpha}{1-\alpha}).
+	\label{eq:app_kappa_indexation}
+\end{equation}
+
+Indexation flattens the Phillips curve (lower $\kappa_\upsilon$) because indexing firms respond mechanically to past inflation rather than optimally to current conditions.
+
+% =========================================================================
+% OPEN ECONOMY
+% =========================================================================
+\subsection{Open Economy Block}
+\label{app:openeconomy}
+
+\paragraph{CPI Aggregator.}
+The CPI is a CES aggregate of domestic and imported goods:
+\begin{equation}
+	P_{C,t} = \left[ (1-\alpha) P_{H,t}^{1-\eta} + \alpha P_{M,t}^{1-\eta} \right]^{1/(1-\eta)},
+	\label{eq:app_cpi}
+\end{equation}
+where $P_{H,t}$ is the domestic price index, $P_{M,t}$ the import price index, $\alpha \in (0,1)$ the import share in consumption, and $\eta > 0$ the elasticity of substitution between domestic and foreign goods.
+
+Log-linearization ($\eta \to 1$):
+\begin{equation}
+	\pi_{C,t} = (1-\alpha)\pi_{H,t} + \alpha \pi_{M,t}.
+	\label{eq:app_cpi_inflation}
+\end{equation}
+
+\paragraph{Baseline Import Inflation.}
+Without incomplete pass-through, law of one price holds: $P_{M,t} = S_t P_t^*$, where $S_t$ is the nominal exchange rate (units of domestic currency per unit of foreign currency) and $P_t^*$ the foreign price level.
+
+From CPI definition and ToT $s_t = \log(S_t P_t^*/P_{H,t})$:
+\begin{equation}
+	\pi_{C,t} = \pi_{H,t} + \upsilon(s_t - s_{t-1}),
+	\label{eq:app_cpi_baseline}
+\end{equation}
+where $\upsilon = \alpha\eta/(1-\alpha+\alpha\eta)$ is the openness parameter and $s_t$ the log ToT.
+
+\paragraph{Incomplete Pass-Through.}
+Import prices adjust gradually to exchange rate changes:
+\begin{equation}
+	\pi_{M,t} = \alpha_{\text{pass}}\Delta e_t + (1-\alpha_{\text{pass}})\pi_{M,t-1},
+	\label{eq:app_import_incomplete}
+\end{equation}
+where $\alpha_{\text{pass}} \in (0,1]$ measures the fraction of exchange rate changes that transmit to import prices within one period, and $\Delta e_t = e_t - e_{t-1}$ is the change in the log nominal exchange rate.
+
+\paragraph{Terms of Trade.}
+From resource constraint and optimal allocation:
+\begin{equation}
+	s_t = \sigma_\upsilon\tilde{y}_t,
+	\label{eq:app_tot}
+\end{equation}
+where $\sigma_\upsilon = \sigma\Phi$ with $\Phi = 1/(1+\upsilon(\omega-1))$ and $\omega = \sigma\eta + (1-\upsilon)(\sigma\eta-1)$.
+
+\paragraph{Exchange Rate Definition.}
+The ToT relates the nominal exchange rate to domestic prices:
+\begin{equation}
+	s_t = e_t - p_{H,t},
+	\label{eq:app_er_def}
+\end{equation}
+where $e_t = \log S_t$ is the log nominal exchange rate and $p_{H,t} = \log P_{H,t}$ the log domestic price level.
+
+% =========================================================================
+% EXTENSIONS TO BASELINE MODEL
+% =========================================================================
+\subsection{Swiss-Specific Extensions}
+\label{app:extensions}
+
+This section shows how each extension modifies the baseline model equations.
+
+\paragraph{Extension 1: Habit Formation.}
+Baseline IS curve:
+\begin{equation}
+	\tilde{y}_t = E_t\tilde{y}_{t+1} - \frac{1}{\sigma_\upsilon}(i_t - E_t\pi_{H,t+1} - r_t^n).
+	\tag{Baseline}
+\end{equation}
+
+Modified utility with habit parameter $h \in [0,1)$:
+\begin{equation}
+	U_t = \frac{(C_t - hC_{t-1})^{1-\sigma}}{1-\sigma} - \frac{N_t^{1+\varphi}}{1+\varphi}.
+\end{equation}
+
+Consumption FOC becomes:
+\begin{equation}
+	(C_t - hC_{t-1})^{-\sigma} - \beta h E_t(C_{t+1} - hC_t)^{-\sigma} = \lambda_t P_{C,t}.
+\end{equation}
+
+Log-linearizing and following the same steps as in Appendix~\ref{app:household} yields:
+\begin{equation}
+	\boxed{\tilde{y}_t = E_t\tilde{y}_{t+1} - \frac{1-h}{\sigma_\upsilon}(i_t - E_t\pi_{H,t+1} - r_t^n)}
+	\label{eq:app_IS_habit}
+	\tag{With habit}
+\end{equation}
+
+Interest rate sensitivity: $(1-h)/\sigma_\upsilon$ instead of $1/\sigma_\upsilon$.
+
+\paragraph{Extension 2: Interest Rate Smoothing.}
+Baseline Taylor rule:
+\begin{equation}
+	i_t = \phi_\pi\pi_{H,t} + \phi_y\tilde{y}_t + \nu_t.
+	\tag{Baseline}
+\end{equation}
+
+With partial adjustment toward target rate:
+\begin{equation}
+	\boxed{i_t = \rho_i i_{t-1} + (1-\rho_i)(\phi_\pi\pi_{H,t} + \phi_y\tilde{y}_t) + \nu_t}
+	\label{eq:app_taylor_smooth}
+	\tag{With smoothing}
+\end{equation}
+
+Parameter $\rho_i \in [0,1)$ controls policy inertia.
+
+\paragraph{Extension 3: Incomplete Exchange Rate Pass-Through.}
+Baseline CPI and import inflation (implicit full pass-through):
+\begin{align}
+	\pi_{C,t} &= \pi_{H,t} + \upsilon(s_t - s_{t-1}), \tag{Baseline CPI} \\
+	\pi_{M,t} &= \pi_t^* + \Delta e_t.  \tag{Full pass-through}
+\end{align}
+
+With gradual adjustment of import prices:
+\begin{align}
+	&\boxed{\pi_{C,t} = (1-\alpha_m)\pi_{H,t} + \alpha_m\pi_{M,t}} \label{eq:app_cpi_incomplete} \tag{Modified CPI} \\
+	&\boxed{\pi_{M,t} = \alpha_{\text{pass}}\Delta e_t + (1-\alpha_{\text{pass}})\pi_{M,t-1}} \label{eq:app_import_incomplete_ext} \tag{Incomplete PT}
+\end{align}
+
+Parameter $\alpha_{\text{pass}} \in (0,1]$ measures fraction passing through immediately. Weight $\alpha_m$ on import inflation in CPI.
+
+\paragraph{Extension 4: Exchange Rate Leaning.}
+Baseline Taylor rule (with smoothing):
+\begin{equation}
+	i_t = \rho_i i_{t-1} + (1-\rho_i)(\phi_\pi\pi_{H,t} + \phi_y\tilde{y}_t) + \nu_t.
+	\tag{No ER leaning}
+\end{equation}
+
+With systematic response to exchange rate changes:
+\begin{equation}
+	\boxed{i_t = \rho_i i_{t-1} + (1-\rho_i)(\phi_\pi\pi_{C,t} + \phi_y\tilde{y}_t + \phi_{\Delta e}\Delta e_t) + \nu_t}
+	\label{eq:app_taylor_fx}
+	\tag{With ER leaning}
+\end{equation}
+
+Parameter $\phi_{\Delta e} \geq 0$ measures leaning strength. Policy responds to CPI inflation $\pi_{C,t}$ when combined with incomplete pass-through.
+
+\paragraph{Extension 5: Price Indexation.}
+See detailed derivation in Appendix~\ref{app:indexation}.
+
+Baseline NKPC:
+\begin{equation}
+	\pi_{H,t} = \beta E_t\pi_{H,t+1} + \kappa_\upsilon\tilde{y}_t.
+	\tag{Baseline}
+\end{equation}
+
+With partial indexation to past inflation:
+\begin{equation}
+	\boxed{\pi_{H,t} = \gamma\pi_{H,t-1} + (1-\gamma)\beta E_t\pi_{H,t+1} + \kappa_\upsilon\tilde{y}_t}
+	\label{eq:app_nkpc_index}
+	\tag{With indexation}
+\end{equation}
+
+Parameter $\gamma \in [0,1]$ controls backward-looking component.
+
+\paragraph{Extension 6: Regime-Dependent Parameters.}
+Baseline Taylor rule (full specification):
+\begin{equation}
+	i_t = \rho_i i_{t-1} + (1-\rho_i)(\phi_\pi\pi_{C,t} + \phi_y\tilde{y}_t + \phi_{\Delta e}\Delta e_t) + \nu_t.
+	\tag{Fixed parameters}
+\end{equation}
+
+With regime-varying coefficients:
+\begin{equation}
+	\boxed{\{\phi_\pi, \phi_{\Delta e}\} = 
+		\begin{cases}
+			\{\phi_\pi^A, \phi_{\Delta e}^A\}, & \text{Regime A: 2000--2014, 2024--2025} \\
+			\{\phi_\pi^B, \phi_{\Delta e}^B\}, & \text{Regime B: 2015--2023}
+	\end{cases}}
+	\label{eq:app_regime}
+	\tag{Regime-dependent}
+\end{equation}
+
+All structural parameters remain constant across regimes.
+
+% =========================================================================
+% COMPOSITE PARAMETERS
+% =========================================================================
+\subsection{Composite Parameters}
+\label{app:composite_params}
+
+The open-economy framework requires composite parameters that combine 
+preference and technology parameters with openness-related elasticities. 
+The most important is $\sigma_\upsilon$, which modifies the inverse IES 
+($\sigma$) to account for consumption smoothing through import-export 
+substitution:
+
+\begin{align}
+	\sigma_\upsilon &= \sigma \Phi, \quad \Phi = \frac{1}{1+\upsilon(\omega-1)}, \quad \omega = \sigma\eta + (1-\upsilon)(\sigma\eta-1), \\
+	\Gamma_a &= \frac{1+\varphi}{\sigma_\upsilon(1-\alpha)+\varphi+\alpha}, \\
+	\kappa_\upsilon &= \lambda\left(\sigma_\upsilon + \frac{\varphi+\alpha}{1-\alpha}\right), \quad \lambda = \frac{(1-\theta)(1-\beta\theta)}{\theta}\Omega, \\
+	\Omega &= \frac{1-\alpha}{1-\alpha+\alpha\varepsilon}.
+\end{align}
+
+% =========================================================================
+% COMPLETE SYSTEM
+% =========================================================================
+\subsection{Complete Equilibrium System}
+\label{app:equilibrium}
+
+\paragraph{Core Behavioral Equations.}
+\begin{align}
+	\tilde{y}_t &= E_t\tilde{y}_{t+1} - \frac{1-h}{\sigma_\upsilon}(i_t - E_t\pi_{H,t+1} - r_t^n), \tag{IS} \\
+	\pi_{H,t} &= \gamma\pi_{H,t-1} + (1-\gamma)\beta E_t\pi_{H,t+1} + \kappa_\upsilon\tilde{y}_t, \tag{NKPC} \\
+	i_t &= \rho_i i_{t-1} + (1-\rho_i)(\phi_\pi^R\pi_{C,t} + \phi_y\tilde{y}_t + \phi_{\Delta e}^R\Delta e_t) + \nu_t, \tag{Taylor} \\
+	\pi_{C,t} &= (1-\alpha_m)\pi_{H,t} + \alpha_m\pi_{M,t}, \tag{CPI} \\
+	\pi_{M,t} &= \alpha_{\text{pass}}\Delta e_t + (1-\alpha_{\text{pass}})\pi_{M,t-1}, \tag{Import} \\
+	s_t &= \sigma_\upsilon\tilde{y}_t, \tag{ToT} \\
+	s_t &= e_t - p_{H,t}. \tag{ER def}
+\end{align}
+
+\paragraph{Exogenous Processes.}
+\begin{align}
+	r_t^n &= -\sigma_\upsilon\Gamma_a(1-\rho_a)a_t, \tag{Natural rate} \\
+	a_t &= \rho_a a_{t-1} + \varepsilon_t^a, \tag{Technology} \\
+	\nu_t &= \rho_\nu\nu_{t-1} - \varepsilon_t^\nu. \tag{Policy shock}
+\end{align}
+
+\paragraph{Auxiliary Equations.}
+\begin{align}
+	p_{H,t} &= p_{H,t-1} + \pi_{H,t}, \tag{Domestic prices} \\
+	p_{C,t} &= p_{C,t-1} + \pi_{C,t}, \tag{CPI level} \\
+	\Delta e_t &= e_t - e_{t-1}. \tag{ER change}
+\end{align}
+
+\newpage
+\section{Robustness to Control Variable Selection}
+\label{app:robustness_controls}
+
+This appendix examines the sensitivity of the main results to the choice of control variables in the local projection specifications. As discussed in Section~\ref{subsec:key_findings}, contemporaneous 2-year government bond yields and the VIX may be affected by monetary policy shocks within the same period, potentially introducing bad control bias. To address this concern, estimates across three specifications are compared:
+
+\begin{enumerate}
+	\item \textbf{No controls:} $y_{t+h} = \alpha_h + \beta_h \hat{\epsilon}_t + u_{t+h}$,
+	\item \textbf{Lagged controls only:} $y_{t+h} = \alpha_h + \beta_h \hat{\epsilon}_t + \phi_h \{\text{KOF}_{t-1}, \text{CPI}_{t-1}\} + u_{t+h}$,
+	\item \textbf{Full controls (main):} $y_{t+h} = \alpha_h + \beta_h \hat{\epsilon}_t + \phi_h \{\text{Yield}_{t}, \text{VIX}_{t}, \text{KOF}_{t-1}, \text{CPI}_{t-1}\} + u_{t+h}$.
+\end{enumerate}
+
+\subsection{EUR/CHF Response Robustness}
+
+Table~\ref{tab:robust_controls_fx} reports the EUR/CHF response to a 1pp policy shock across the three specifications. Point estimates are almost identical, and statistical significance is preserved in all cases.
+
+\begin{table}[H]
+	\centering
+	\caption{EUR/CHF Response Across Control Specifications} 
+	\label{tab:robust_controls_fx}
+	\begin{tabular}{clll}
+		\toprule
+		Horizon & No Controls & Lagged Only & Full Controls \\ 
+		\midrule
+		1  & 4.53 (1.45)*** & 4.53 (1.48)*** & 4.53 (1.47)*** \\ 
+		2  & 3.58 (1.12)*** & 3.58 (1.14)*** & 3.58 (1.12)*** \\ 
+		6  & 2.75 (1.18)**  & 2.75 (1.23)**  & 2.75 (1.30)**  \\ 
+		12 & 0.66 (1.83)    & 0.63 (1.84)    & 0.57 (2.01)    \\ 
+		\bottomrule
+	\end{tabular}
+	\vspace{0.2cm}
+	
+	{\footnotesize
+		\textit{Notes:} $^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01.}
+\end{table}
+
+The exchange rate response is robust to the inclusion or exclusion of contemporaneous controls. The main qualitative finding, CHF appreciation following rate cuts, does not depend on the control set.
+
+\subsection{CPI Inflation Response Robustness}
+
+Table~\ref{tab:robust_controls_cpi} reports CPI inflation responses across the same specifications. In all cases, coefficients remain small and statistically insignificant, confirming that the pooled null result for inflation is not driven by control choice.
+
+\begin{table}[H]
+	\centering
+	\caption{CPI Inflation Response Across Control Specifications} 
+	\label{tab:robust_controls_cpi}
+	\begin{tabular}{clll}
+		\toprule
+		Horizon & No Controls & Lagged Only & Full Controls \\ 
+		\midrule
+		1  & 0.14 (0.42)   & 0.14 (0.35)   & 0.14 (0.29)   \\ 
+		2  & 0.13 (0.63)   & 0.13 (0.51)   & 0.13 (0.42)   \\ 
+		6  & 0.07 (0.66)   & 0.07 (0.45)   & 0.07 (0.44)   \\ 
+		12 & $-$0.35 (0.68) & $-$0.31 (0.60) & $-$0.29 (0.58) \\ 
+		\bottomrule
+	\end{tabular}
+	\vspace{0.2cm}
+	
+	{\footnotesize
+		\textit{Notes:} $^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01}
+\end{table}
+
+Across all horizons and specifications, CI include zero, reinforcing the conclusion that there is no significant pooled effect of rate cuts on CPI inflation.
+
+\subsection{Regime Comparison Robustness}
+
+Table~\ref{tab:robust_regime_cpi} reports the key robustness check for regime-dependent CPI responses using only lagged controls. This specification avoids contemporaneous variables entirely and thus provides the cleanest test of whether transmission differs across regimes.
+
+\begin{table}[H]
+	\centering
+	\caption{CPI Regime Comparison with Lagged Controls Only} 
+	\label{tab:robust_regime_cpi}
+	\begin{tabular}{clll}
+		\toprule
+		Horizon & Positive Regime & Negative Regime & Wald Test (F, p) \\ 
+		\midrule
+		1  & 0.07 (0.37)   & 1.30 (0.13)*** & 9.43 (0.002)*** \\ 
+		2  & 0.01 (0.53)   & 2.16 (0.38)*** & 10.92 (0.001)*** \\ 
+		6  & $-$0.17 (0.46) & 4.22 (0.53)*** & 37.87 (0.000)*** \\ 
+		12 & $-$0.70 (0.46) & 6.15 (0.91)*** & 54.12 (0.000)*** \\ 
+		\bottomrule
+	\end{tabular}
+	\vspace{0.2cm}
+	
+	{\footnotesize
+		\textit{Notes:} $^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01.}
+\end{table}
+
+Under positive rates, responses remain close to zero and insignificant. Under negative rates, CPI shows large and statistically significant increases at all horizons. Wald tests strongly reject equality of coefficients across regimes, with p-values below 0.01 throughout.
+
+\subsection{Summary of Robustness Evidence}
+
+The robustness results support three main conclusions:
+\begin{enumerate}
+	\item The EUR/CHF response to rate cuts is stable across alternative control specifications.
+	\item The absence of a pooled CPI response is not driven by control choice.
+	\item The main finding of regime-dependent inflation transmission remains highly significant even in the most conservative (lagged-only) specification, with larger regime differences than in the baseline model.
+\end{enumerate}
+
+Overall, the control choice affects neither the qualitative conclusions nor the core regime-dependent result. The main specification with Random Forest-selected controls offers more precise estimates, while the lagged-only specification provides a conservative benchmark that confirms the robustness of the central findings.
+	
+\end{appendices}
+
+\newpage
+
+% =========================================================================
+% DECLARATION OF INDEPENDENT WORK
+% =========================================================================
+\thispagestyle{empty}
+\vspace*{1cm}
+
+{\bf \huge Declaration of Independent Work} \\[0.4cm]
+
+I hereby declare that I have written this thesis without any help from others and without the use of documents and aids other than those stated above. I have mentioned all used sources and cited them correctly according to established academic citation rules. I am aware that otherwise the Senat is entitled to revoke the degree awarded on the basis of this thesis, according to article 36 paragraph 1 letter o of the University Act from 5 September 1996. \\[0.5cm]
+
+AI-based tools were used solely for language and code improvement purposes. All conceptual, analytical, and interpretative parts of this thesis are entirely my own work. \\[1.0cm]
+
+Bern, \today \hfill \makebox[6cm]{\hrulefill} \\[-0.2cm]
+
+\end{document}
