@@ -91,7 +91,14 @@
 % =========================================================================
 \section{Introduction}\label{sec:introduction}
 
-This companion document presents seven methodological extensions to the main thesis, which analyzes Swiss National Bank (SNB) monetary policy transmission using a purging regression approach combined with local projections \citep{jorda2005}. The main analysis identifies monetary policy shocks as residuals from a purging regression of policy rate changes on macroeconomic controls, then traces their dynamic effects on the EUR/CHF exchange rate and CPI inflation over 12-month horizons.
+This companion document presents seven methodological extensions to the main thesis, which analyzes Swiss National Bank (SNB) monetary policy transmission using a purging regression approach combined with local projections \citep{jorda2005}. The main analysis addresses two research questions:
+
+\begin{enumerate}[label=\textbf{RQ\arabic*:}, leftmargin=*, itemsep=0.4em]
+	\item What is the effect of an unexpected SNB rate cut on (i) the EUR/CHF exchange rate and (ii) Swiss inflation between 2000--2025?
+	\item Can the transmission mechanisms of a Swiss-calibrated SOE DSGE model be empirically validated using structural identification combined with machine-learning methods?
+\end{enumerate}
+
+The main findings are that rate cuts depreciate the Swiss franc by approximately 4.5\% per percentage point shock (significant through 6 months), that pooled inflation responses are economically small and statistically insignificant, and that regime analysis reveals large CPI asymmetries under negative rates---though these likely reflect the extraordinary January 2015 EUR/CHF floor removal rather than general negative-rate properties.
 
 These extensions serve three purposes. First, they strengthen the identification of monetary policy shocks by employing high-frequency intraday data as an external instrument (Section~\ref{sec:hf}) and by decomposing shocks into pure monetary and information components (Section~\ref{sec:info}). Second, they enhance statistical inference through wild bootstrap confidence intervals (Section~\ref{sec:bootstrap}) and placebo/falsification tests (Section~\ref{sec:placebo}). Third, they investigate nonlinearities and heterogeneity in transmission through smooth transition local projections (Section~\ref{sec:smooth}), additional outcome variables (Section~\ref{sec:outcomes}), and asymmetry tests by shock sign and size (Section~\ref{sec:asymmetry}).
 
@@ -105,7 +112,7 @@ All extensions use the same data and shock identification from the main pipeline
 
 \subsection{Motivation}
 
-The purging regression approach identifies monetary policy shocks by controlling for the central bank's systematic response to macroeconomic conditions. A complementary identification strategy uses high-frequency asset price movements in narrow windows around policy announcements as external instruments \citep{gertler2015, stock2018}. The key insight is that in a sufficiently tight window, asset price changes primarily reflect the policy surprise rather than other macroeconomic news.
+The purging regression approach identifies monetary policy shocks by controlling for the central bank's systematic response to macroeconomic conditions. However, as acknowledged in the main thesis, monthly-frequency identification cannot address intraday simultaneity or fully separate policy shocks from information effects. A complementary identification strategy uses high-frequency asset price movements in narrow windows around policy announcements as external instruments \citep{gertler2015, stock2018}. The key insight is that in a sufficiently tight window, asset price changes primarily reflect the policy surprise rather than other macroeconomic news.
 
 \subsection{Methodology}
 
@@ -133,7 +140,13 @@ The second stage at each horizon $h$ is:
 
 \subsection{Discussion}
 
-The high-frequency identification provides an important cross-check on the baseline purging regression approach. The sample is restricted to events from 2020 onward where hourly EUR/CHF data is available, yielding a small number of observations. The first-stage F-statistic provides a diagnostic for instrument strength. If IV and OLS estimates are qualitatively similar, this supports the validity of the baseline identification; systematic differences may indicate endogeneity bias in the OLS estimates or weak instrument problems in the IV approach. Given the small sample, these results should be interpreted as suggestive rather than definitive.
+The first-stage F-statistic of 0.62 falls well below the conventional threshold of 10 for instrument relevance \citep{stock2018}, classifying the intraday EUR/CHF surprise as a weak instrument. The coefficient on \texttt{hf\_surprise} in the first-stage regression is 0.128 with a standard error of 0.162 ($p = 0.44$), indicating that the hourly exchange rate movement around announcements is not a strong predictor of the monthly purging-regression residual.
+
+This weak instrument problem has clear consequences for the second-stage IV-LP estimates. The IV coefficients are enormous in magnitude (e.g., $-451$ at $h=12$) with correspondingly massive standard errors (2,831), reflecting the well-known amplification of noise when the first stage is weak. By contrast, the OLS-LP baseline produces economically plausible estimates: a $-9.68\%$ response at $h=3$ (significant at 1\%) and a sign reversal to $+17.5\%$ at $h=12$.
+
+The weakness of the instrument likely stems from two sources. First, the sample is restricted to 25 events from 2020 onward where hourly data is available---far too few observations for reliable IV estimation. Second, the hourly EUR/CHF change captures the immediate market reaction, which may not map linearly onto the monthly-frequency purging-regression residual that also absorbs information revealed between meetings.
+
+\textbf{Implications for RQ1:} The failure of the IV strategy does not invalidate the baseline identification. Rather, it underscores the main thesis's acknowledgment that monthly-frequency purging regression faces identification constraints that high-frequency data could in principle resolve, but the available sample is insufficient. The qualitative finding that rate cuts depreciate the franc (negative OLS-LP coefficients at short horizons) remains the most reliable result. Future research with longer intraday samples could revisit this approach as a stronger cross-check.
 
 
 % =========================================================================
@@ -143,7 +156,7 @@ The high-frequency identification provides an important cross-check on the basel
 
 \subsection{Motivation}
 
-The main analysis uses a hard regime dummy (positive vs.\ negative interest rates) to capture potential nonlinearities in monetary policy transmission. However, the transition between regimes is unlikely to be discrete. Following the smooth transition regression framework of \citet{auerbach2013} and \citet{tenreyro2016}, we replace the binary indicator with a logistic transition function that allows for gradual regime shifts.
+The main analysis uses a hard regime dummy (positive vs.\ negative interest rates) to capture potential nonlinearities in monetary policy transmission. However, the transition between regimes is unlikely to be discrete. Following the smooth transition regression framework of \citet{auerbach2013} and \citet{tenreyro2016}, we replace the binary indicator with a logistic transition function that allows for gradual regime shifts. This addresses whether the large regime asymmetries documented in the main thesis---particularly the CPI differences driven by the 2015 floor removal---are robust to the specification of the regime boundary.
 
 \subsection{Methodology}
 
@@ -185,7 +198,13 @@ We estimate this for $\gamma \in \{1, 3, 5, 10\}$ to assess sensitivity to the t
 
 \subsection{Discussion}
 
-The smooth transition framework reveals whether the regime dependence found in the main analysis is robust to the specification of the regime boundary. If results are stable across $\gamma$ values, this suggests the findings are not driven by the arbitrary binary split. Conversely, sensitivity to $\gamma$ would indicate that the transition between regimes matters for the estimated transmission mechanism. As $\gamma \to \infty$, the smooth transition model converges to the hard-threshold specification.
+The smooth transition results for the preferred specification ($\gamma = 5$) reveal a pattern consistent with the main thesis but with important nuances. In the normal-rate regime, EUR/CHF responses are precisely estimated and economically meaningful: a 4.22\% depreciation at $h=1$ (SE = 1.26), declining gradually to 1.77\% at $h=12$. These estimates closely match the pooled baseline from the main analysis (4.53\% at $h=1$), confirming that the exchange rate channel operates reliably when conventional policy tools are available.
+
+In the low-rate regime, point estimates are substantially larger (8.39\% at $h=1$, peaking at 16.11\% at $h=3$) but with standard errors an order of magnitude wider (15.75 and 11.37, respectively). The sign reversal at $h=12$ ($-14.89$) mirrors the pattern found in the hard-threshold regime analysis. This imprecision reflects the fundamental constraint identified in the main thesis: only two negative-rate cuts exist in the sample, both coinciding with the January 2015 EUR/CHF floor removal.
+
+A key finding emerges from comparing across $\gamma$ values: the normal-rate regime coefficients are stable across all transition speeds, while low-rate coefficients vary substantially. This confirms that the regime asymmetry is driven by a small number of extreme observations rather than a smooth structural shift in the transmission mechanism. As $\gamma$ decreases (smoother transition), the low-rate estimates become less extreme because more moderate observations receive partial low-rate weight, diluting the influence of the 2015 episode.
+
+\textbf{Implications for RQ1:} The stable normal-rate estimates across $\gamma$ values strengthen confidence in the core finding of approximately 4\% depreciation per pp shock. The instability of low-rate estimates across $\gamma$ values supports the main thesis's cautious interpretation that negative-rate regime differences reflect the 2015 floor removal rather than a fundamental shift in monetary transmission. For RQ2, the DSGE model's prediction of minimal regime differences (+0.02pp inflation) aligns better with the smooth transition framework's suggestion that regime boundaries are not structurally sharp.
 
 
 % =========================================================================
@@ -195,7 +214,7 @@ The smooth transition framework reveals whether the regime dependence found in t
 
 \subsection{Motivation}
 
-Local projection standard errors are typically computed using the \citet{newey1987} heteroskedasticity and autocorrelation consistent (HAC) estimator. However, HAC inference can perform poorly in small samples, which is relevant for our analysis given the limited number of policy rate changes. The Rademacher wild bootstrap provides an alternative that has better finite-sample properties \citep{gonccalves2004}.
+Local projection standard errors are typically computed using the \citet{newey1987} heteroskedasticity and autocorrelation consistent (HAC) estimator. However, HAC inference can perform poorly in small samples, which is relevant for our analysis given the limited number of policy rate changes (19 cuts in 300 months). The Rademacher wild bootstrap provides an alternative that has better finite-sample properties \citep{gonccalves2004}. This is particularly important given the main thesis's acknowledgment that small sample size severely constrains the analysis.
 
 \subsection{Methodology}
 
@@ -233,7 +252,13 @@ For each horizon $h$:
 
 \subsection{Discussion}
 
-Comparing the two sets of confidence intervals reveals whether asymptotic Newey-West inference provides adequate coverage in our sample. If bootstrap CIs are substantially wider, the asymptotic approximation may be overly optimistic, and some findings that appear significant under Newey-West may not survive bootstrap inference. Conversely, similar CIs would increase confidence in the baseline results.
+The bootstrap analysis yields a clear hierarchy of statistical significance across horizons. At $h=1$, the EUR/CHF depreciation of 4.53\% remains statistically significant under the wild bootstrap ($p = 0.025$), though the confidence interval widens from $[2.17, 6.89]$ (Newey-West) to $[0.72, 8.88]$ (bootstrap). This confirms the impact effect as the most robust finding.
+
+At $h=3$, the result that appeared highly significant under Newey-West ($p = 0.006$) loses significance under the bootstrap ($p = 0.128$), with the confidence interval expanding from $[1.02, 6.20]$ to $[-0.71, 9.23]$ and now including zero. Similarly, the $h=6$ result ($p_{\text{NW}} = 0.034$ vs.\ $p_{\text{boot}} = 0.293$) is no longer significant. At $h=12$, both methods agree on insignificance.
+
+The pattern of wider bootstrap CIs is consistent with the theoretical expectation that Newey-West approximations are optimistic in small samples. The asymmetric widening---bootstrap CIs shift upward relative to Newey-West---suggests that the $t$-statistic distribution under the null is left-skewed, which HAC standard errors do not capture.
+
+\textbf{Implications for RQ1:} The bootstrap results refine the main thesis's answer to RQ1 regarding exchange rates. The \emph{impact} depreciation effect (approximately 4.5\% at $h=1$) is robust to inference method, but the \emph{persistence} of the effect (significant through $h=6$ under Newey-West) should be interpreted more cautiously. The conservative conclusion is that SNB rate cuts generate a significant immediate franc depreciation, with suggestive but not statistically robust evidence of persistence beyond 1 month. For CPI, both inference methods agree on the absence of significant pooled effects, strengthening the main finding of weak inflation pass-through. This aligns with the DSGE model's prediction of muted CPI responses due to incomplete exchange rate pass-through and habit formation (RQ2).
 
 
 % =========================================================================
@@ -243,14 +268,14 @@ Comparing the two sets of confidence intervals reveals whether asymptotic Newey-
 
 \subsection{Motivation}
 
-A well-identified monetary policy shock should only produce significant effects when actual policy changes occur. If the same LP specification yields significant results when applied to ``no-change'' meetings where the SNB held rates constant, this would cast doubt on the identification strategy \citep{ramey2016}.
+A well-identified monetary policy shock should only produce significant effects when actual policy changes occur. If the same LP specification yields significant results when applied to ``no-change'' meetings where the SNB held rates constant, this would cast doubt on the identification strategy \citep{ramey2016}. This extension directly addresses the main thesis's concern that the purging regression may not adequately separate anticipated from unanticipated policy actions.
 
 \subsection{Methodology}
 
 We construct two types of placebo tests:
 
 \begin{enumerate}
-	\item \textbf{Fitted-value placebo}: On meeting dates where $\Delta r_t = 0$, we use the predicted component from the purging regression (i.e., the fitted value $\hat{\Delta r}_t$, representing the anticipated policy action) as a ``shock.'' If identification is valid, anticipated actions should not produce significant exchange rate or inflation responses.
+	\item \textbf{Fitted-value placebo}: On meeting dates where $\Delta r_t = 0$ (68 hold decisions), we use the predicted component from the purging regression (i.e., the fitted value $\hat{\Delta r}_t$, representing the anticipated policy action) as a ``shock.'' If identification is valid, anticipated actions should not produce significant exchange rate or inflation responses.
 
 	\item \textbf{Permutation test}: We randomly shuffle the shock assignment across time periods ($N = 500$ permutations) and re-estimate the LPs. The permutation $p$-value is the fraction of randomized coefficients exceeding the actual estimate in absolute value.
 \end{enumerate}
@@ -275,7 +300,15 @@ We construct two types of placebo tests:
 
 \subsection{Discussion}
 
-The placebo tests provide a falsification check for the shock identification. Insignificant placebo responses (close to zero) and low permutation $p$-values for the actual shock strengthen the causal interpretation of the baseline results. If placebo shocks produce responses comparable to actual shocks, this would suggest the identification does not adequately separate anticipated from unanticipated policy actions.
+The placebo tests provide strong support for the identification strategy at short horizons but weaker support as the horizon increases. Three key results emerge.
+
+First, the placebo shock coefficients are close to zero and economically negligible at all horizons for both EUR/CHF ($-0.57$ at $h=1$) and CPI ($0.01$ at $h=1$), compared with actual shock effects of 4.53 and 0.14, respectively. The predicted component of policy---which captures the systematic response to macroeconomic conditions---does not generate exchange rate movements, confirming that the purging regression successfully removes this anticipated component.
+
+Second, the permutation test rejects the null at $h=1$ for EUR/CHF with $p = 0.018$: only 1.8\% of random shock assignments produce coefficients as large as the actual estimate. This provides direct evidence that the observed impact depreciation is unlikely to arise by chance. However, permutation $p$-values increase rapidly with the horizon ($p = 0.116$ at $h=3$, $p = 0.344$ at $h=6$, $p = 0.878$ at $h=12$), consistent with the bootstrap finding that persistence beyond impact is statistically fragile.
+
+Third, for CPI, permutation $p$-values are uniformly large (0.544 to 0.908), consistent with the main finding that pooled inflation responses are indistinguishable from zero.
+
+\textbf{Implications for RQ1 and RQ2:} The placebo results strengthen the causal interpretation of the impact exchange rate effect. The fact that anticipated policy (fitted values) generates no response while unanticipated policy (residuals) generates a 4.5\% depreciation is precisely what a correctly identified shock should produce. This addresses the main thesis's concern about identification constraints: at least at $h=1$, the purging regression appears to isolate genuine policy surprises. The declining permutation significance at longer horizons is consistent with the bootstrap results and suggests that the true causal effect is concentrated at impact. For CPI, the absence of significant placebo or permutation results is uninformative---it is consistent with both correct identification (no true CPI effect) and incorrect identification (both actual and placebo shocks miss the true channel).
 
 
 % =========================================================================
@@ -285,7 +318,7 @@ The placebo tests provide a falsification check for the shock identification. In
 
 \subsection{Motivation}
 
-Central bank announcements convey not only policy actions but also information about the central bank's assessment of economic conditions. \citet{nakamura2018} and \citet{jarocinski2020} show that disentangling ``pure monetary policy'' from ``information'' components is crucial for correctly identifying transmission mechanisms. An unexpected rate cut paired with a yield decline and CHF depreciation signals standard monetary easing, whereas a rate cut accompanied by a yield increase and CHF appreciation suggests the market learned negative economic news (information effect).
+Central bank announcements convey not only policy actions but also information about the central bank's assessment of economic conditions. \citet{nakamura2018} and \citet{jarocinski2020} show that disentangling ``pure monetary policy'' from ``information'' components is crucial for correctly identifying transmission mechanisms. The main thesis explicitly acknowledges information effects as a key limitation of the purging regression approach, noting that monthly frequency prevents separating these channels. This extension provides a first attempt at doing so with the available data.
 
 \subsection{Methodology}
 
@@ -327,7 +360,15 @@ We then create separate shock variables and estimate:
 
 \subsection{Discussion}
 
-This decomposition is a simplified version of \citet{jarocinski2020}, adapted to the available Swiss data. The classification relies on monthly yield changes rather than intraday movements, which introduces more noise. Nevertheless, systematic differences between pure MP and information shock responses would suggest that information effects are an important channel in SNB communication and that the baseline estimates represent a mixture of both components.
+The decomposition reveals meaningful differences between pure monetary and information shocks across both outcome variables.
+
+For EUR/CHF, information shocks generate a larger immediate depreciation (6.60\% at $h=1$) than pure MP shocks (4.33\%), but the dynamics differ sharply. Pure MP effects are persistent: the 4.33\% impact declines gradually to 2.90\% at $h=6$ before fading to 0.25\% at $h=12$. Information effects are front-loaded but less persistent: 6.60\% at impact, still 6.37\% at $h=3$, but dropping to 1.19\% at $h=6$ before partially rebounding to 3.70\% at $h=12$. The larger information shock impact is consistent with the \citet{nakamura2018} finding that ``Fed information effects'' amplify immediate asset price responses because markets are simultaneously updating their beliefs about both the policy stance and the economic outlook.
+
+For CPI, the decomposition is more informative. Pure MP shocks generate essentially zero inflation responses at all horizons (ranging from $-0.24$ to $+0.25$ pp), consistent with the main thesis's finding of weak pooled pass-through. Information shocks, by contrast, produce a positive impact ($+0.91$ pp at $h=1$) that turns sharply negative at medium horizons ($-1.75$ pp at $h=6$, $-2.32$ pp at $h=12$). This sign reversal is economically intuitive: when the SNB cuts rates while markets learn negative economic news (the information channel), the initial inflationary impulse from depreciation is eventually dominated by the disinflationary effect of weaker economic conditions revealed by the central bank's action.
+
+\textbf{Implications for RQ1 and RQ2:} The decomposition suggests that the baseline pooled estimates represent a weighted average of two distinct channels. The pure MP component---which is conceptually closest to what the DSGE model captures---produces exchange rate effects of approximately 4.3\%, closely matching the model's prediction of moderate depreciation. The near-zero CPI response to pure MP shocks validates the DSGE model's incomplete pass-through mechanism even more strongly than the pooled results. For RQ2, this is encouraging: the model's structural parameters (9\% immediate pass-through) appear well-calibrated to the pure monetary channel. The information channel, which the DSGE framework does not model, operates through a fundamentally different mechanism---belief updating about economic fundamentals rather than interest rate arbitrage.
+
+An important caveat applies: this classification uses monthly yield changes rather than the intraday movements employed by \citet{jarocinski2020}, introducing substantial measurement noise. The results should be interpreted as suggestive of the importance of information effects in SNB communication rather than as precise quantitative estimates.
 
 
 % =========================================================================
@@ -337,7 +378,7 @@ This decomposition is a simplified version of \citet{jarocinski2020}, adapted to
 
 \subsection{Motivation}
 
-The main analysis focuses on EUR/CHF exchange rate and CPI inflation responses. To provide a more complete picture of the monetary transmission mechanism, we extend the LP framework to additional variables representing the yield curve channel (2-year and 10-year government bond yields) and real economic expectations (KOF Economic Barometer).
+The main analysis focuses on EUR/CHF exchange rate and CPI inflation responses. To provide a more complete picture of the monetary transmission mechanism---and to test additional predictions of the DSGE model---we extend the LP framework to additional variables representing the yield curve channel (2-year and 10-year government bond yields) and real economic expectations (KOF Economic Barometer).
 
 \subsection{Methodology}
 
@@ -381,7 +422,15 @@ using Newey-West standard errors with lag truncation $h$.
 
 \subsection{Discussion}
 
-The yield responses trace the term structure channel of monetary policy transmission. A rate cut shock should lower short-term yields more than long-term yields, consistent with expectations channel propagation. The KOF response captures the real economy channel---whether monetary easing improves business expectations. Together with the exchange rate and inflation responses from the main analysis, these results map out the full transmission mechanism of SNB policy.
+The yield responses trace the term structure channel of monetary policy transmission and produce the most statistically clear-cut result among the additional outcomes.
+
+The 2-year yield response is initially positive ($+0.119$ pp at $h=1$, insignificant) before turning negative ($-0.199$ at $h=3$, $-0.390$ at $h=6$), though it remains statistically insignificant at conventional levels. The initial positive response may seem counterintuitive---a rate cut should lower yields---but is consistent with the information effect channel identified in Section~\ref{sec:info}: if markets interpret the cut as a signal of worse-than-expected economic conditions, short-term yields may temporarily rise as markets reprice risk.
+
+The 10-year yield shows a clear and statistically significant decline of $-0.643$ pp at $h=6$ ($p < 0.01$). This is the only additional outcome with a strongly significant result and has a natural interpretation: rate cuts gradually transmit to longer maturities through the expectations channel, with the full effect materializing at 6 months as markets incorporate the lower policy rate into their long-run interest rate expectations. The effect dissipates by $h=12$ ($-0.002$), suggesting that long yields eventually reflect other macroeconomic developments. The significant 10-year yield decline confirms that SNB rate cuts affect the entire yield curve, not just the short end---a key transmission channel in the DSGE model through the expectations hypothesis.
+
+The KOF barometer responses are economically noisy. The initial positive response ($+2.919$ points at $h=1$) suggests a brief confidence boost, but the large standard error (4.148) renders it insignificant. The reversal at $h=6$ ($-4.591$) and $h=12$ ($-1.113$) may reflect the counter-cyclical nature of rate cuts: they occur during economic weakness, and the KOF barometer may be responding to the underlying economic deterioration that prompted the cut rather than to the monetary stimulus itself. This endogeneity concern illustrates why the purging regression is essential---without removing the systematic component, real activity responses conflate the cause (monetary easing) with the trigger (economic weakness).
+
+\textbf{Implications for RQ2:} The significant 10-year yield decline at 6 months validates a core prediction of the DSGE model: monetary policy transmits to long-term rates through the expectations channel. The DSGE model predicts that the nominal interest rate declines on impact and returns to steady state within 8--12 quarters; the empirical 6-month peak and subsequent fade is qualitatively consistent with this timing. The insignificant KOF responses highlight a limitation of the empirical approach: real activity effects are difficult to isolate when rate cuts are endogenous to economic conditions, even after purging.
 
 
 % =========================================================================
@@ -391,7 +440,7 @@ The yield responses trace the term structure channel of monetary policy transmis
 
 \subsection{Motivation}
 
-Standard linear LP specifications impose symmetric responses to positive and negative shocks of equal magnitude. However, economic theory suggests several channels through which asymmetries may arise: downward nominal rigidities, different credibility of rate cuts vs.\ hikes, or nonlinear portfolio adjustment effects \citep{tenreyro2016}. We test for both sign asymmetry (easing vs.\ tightening) and size asymmetry (large vs.\ small shocks).
+Standard linear LP specifications impose symmetric responses to positive and negative shocks of equal magnitude. However, economic theory suggests several channels through which asymmetries may arise: downward nominal rigidities, different credibility of rate cuts vs.\ hikes, or nonlinear portfolio adjustment effects \citep{tenreyro2016}. For the Swiss case, the CHF's safe-haven status \citep{ranaldo2010} could create asymmetries if rate cuts during stress episodes have different exchange rate effects than rate hikes during normalization periods.
 
 \subsection{Methodology}
 
@@ -430,7 +479,15 @@ where $\text{shock}_t^{-} = \text{mp\_shock}_t \cdot \mathbf{1}(\text{mp\_shock}
 
 \subsection{Discussion}
 
-Sign asymmetry is particularly relevant for the Swiss case: given the CHF's safe-haven status \citep{ranaldo2010}, rate cuts during stress episodes may have different exchange rate effects than rate hikes during normalization periods. Size asymmetry tests whether markets respond proportionally to policy surprises or whether large shocks trigger disproportionate reactions (e.g., through portfolio rebalancing or threshold effects in market microstructure). The quantile regression results complement the mean-response analysis by revealing whether the effects are homogeneous across the conditional distribution of exchange rate changes.
+Neither sign nor size asymmetry is statistically significant at any horizon, with all Wald $p$-values exceeding 0.10. This is an important non-result that constrains the interpretation of the main findings.
+
+For sign asymmetry, rate hikes generate numerically larger point estimates than rate cuts at short horizons (6.83 vs.\ 3.13 at $h=1$), but the Wald test fails to reject equality ($p = 0.300$). The larger hike coefficients could reflect the safe-haven channel: SNB tightening during normalization may trigger CHF appreciation as carry trade positions unwind, amplifying the exchange rate response relative to cuts during stress. However, the wide confidence intervals---driven by few hike observations---preclude strong conclusions. At longer horizons, both estimates lose significance and the Wald tests remain firmly insignificant ($p = 0.265$ at $h=12$).
+
+For size asymmetry, large shocks produce stable, precisely estimated effects (3.56 at $h=1$, significant at 5\%), while small shocks yield enormous but wildly imprecise point estimates (23.04 at $h=1$). The very large small-shock coefficients are an artifact of the scaling: small shocks by definition have near-zero magnitude, so even modest exchange rate movements translate into large per-unit coefficients. The Wald tests correctly identify that this apparent difference is not statistically meaningful ($p = 0.375$).
+
+The quantile regression results reveal interesting distributional heterogeneity. At $h=1$, the median response (3.04, significant at 1\%) is well-estimated, while the lower (2.04) and upper (3.14) quartile responses have wider confidence intervals. At $h=6$, the upper quartile shows a significant response (3.64, $p < 0.05$) while the lower quartile is insignificant, suggesting that the exchange rate response is stronger in episodes where the franc depreciates more broadly---consistent with safe-haven unwinding during calmer market conditions.
+
+\textbf{Implications for RQ1:} The absence of significant asymmetry supports the linear specification used in the main analysis. The main thesis's finding of 4.5\% depreciation per pp shock appears to apply symmetrically to cuts and hikes, large and small shocks, justifying the pooled estimation. This also distinguishes the sign/size asymmetry (not found) from the regime asymmetry (strongly significant in the main thesis), suggesting that regime dependence operates through structural changes in the transmission mechanism (e.g., the 2015 floor removal) rather than through nonlinear responses to shock characteristics.
 
 
 % =========================================================================
@@ -438,15 +495,15 @@ Sign asymmetry is particularly relevant for the Swiss case: given the CHF's safe
 % =========================================================================
 \section{Conclusion}\label{sec:conclusion}
 
-The seven extensions presented in this document strengthen and extend the main thesis analysis along three dimensions.
+The seven extensions presented in this document strengthen and extend the main thesis analysis along three dimensions, with direct implications for both research questions.
 
-\textbf{Identification.} The high-frequency IV approach (Section~\ref{sec:hf}) provides an independent check on the purging regression identification, while the information effect decomposition (Section~\ref{sec:info}) disentangles pure monetary from information components in SNB announcements.
+\textbf{Identification.} The high-frequency IV approach (Section~\ref{sec:hf}) highlights the limitations of small-sample IV estimation with only 25 events, confirming that the purging regression remains the most feasible identification strategy with available data. The information effect decomposition (Section~\ref{sec:info}) reveals that pure monetary shocks generate a 4.3\% exchange rate depreciation and near-zero CPI effects---closely matching the DSGE model's predictions and suggesting that the baseline pooled estimates blend pure policy with information channels.
 
-\textbf{Inference.} The wild bootstrap (Section~\ref{sec:bootstrap}) addresses potential small-sample distortions in Newey-West standard errors, and the placebo tests (Section~\ref{sec:placebo}) provide direct falsification evidence for the shock identification strategy.
+\textbf{Inference.} The wild bootstrap (Section~\ref{sec:bootstrap}) confirms the impact exchange rate effect ($p = 0.025$) but suggests that persistence beyond 1 month is less robust than Newey-West inference indicates ($p = 0.128$ at $h=3$). The placebo tests (Section~\ref{sec:placebo}) provide the strongest validation of the identification strategy: anticipated policy produces no exchange rate response, and the actual shock effect is significant in only 1.8\% of random permutations at $h=1$. Together, these results narrow the main thesis's finding from ``significant depreciation through 6 months'' to ``robust impact depreciation with suggestive persistence.''
 
-\textbf{Heterogeneity.} The smooth transition framework (Section~\ref{sec:smooth}) relaxes the hard regime threshold, additional outcome variables (Section~\ref{sec:outcomes}) map the full transmission mechanism across yields and real activity, and the asymmetry tests (Section~\ref{sec:asymmetry}) reveal whether transmission depends on the direction and magnitude of policy surprises.
+\textbf{Heterogeneity.} The smooth transition framework (Section~\ref{sec:smooth}) confirms stable normal-rate transmission ($\sim$4.2\% depreciation) but shows that low-rate estimates are sensitive to the transition specification, reinforcing the main thesis's cautious interpretation of regime differences. Additional outcome variables (Section~\ref{sec:outcomes}) reveal a significant 10-year yield decline at 6 months, validating the DSGE model's expectations channel. The absence of sign and size asymmetry (Section~\ref{sec:asymmetry}) supports the linear LP specification and distinguishes structural regime dependence from nonlinear shock responses.
 
-Together, these extensions provide a comprehensive robustness and sensitivity analysis that complements the core findings of the main thesis.
+Taken together, these extensions support the core conclusions of the main thesis while refining their precision. The most robust finding across all methods is the immediate exchange rate depreciation of approximately 4--5\% per percentage point rate cut shock, significant under asymptotic inference, wild bootstrap, and permutation tests. The weak inflation response to pure monetary shocks validates the DSGE model's incomplete pass-through mechanism. The regime-dependent results remain statistically significant but should be interpreted as reflecting the extraordinary 2015 floor removal episode rather than a general property of monetary transmission under negative interest rates.
 
 
 % =========================================================================
