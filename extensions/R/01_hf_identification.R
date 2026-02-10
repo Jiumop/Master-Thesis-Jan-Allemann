@@ -212,24 +212,21 @@ comp_table <- combined %>%
       abs(beta / se) > 1.645 ~ "*",
       TRUE ~ ""
     ),
-    coef_fmt = paste0(sprintf("%.2f", beta), sig),
-    se_fmt   = sprintf("(%.2f)", se)
+    cell = paste0(sprintf("%.2f", beta), sig, " (", sprintf("%.2f", se), ")")
   ) %>%
   filter(horizon %in% c(1, 3, 6, 12)) %>%
-  select(horizon, method, coef_fmt, se_fmt) %>%
-  pivot_wider(names_from = method, values_from = c(coef_fmt, se_fmt))
+  select(horizon, method, cell) %>%
+  pivot_wider(names_from = horizon, values_from = cell, names_prefix = "h = ")
 
-# Clean column names for LaTeX
-colnames(comp_table) <- gsub("_", " ", colnames(comp_table))
+colnames(comp_table)[1] <- "Method"
 
 comp_xtable <- xtable(comp_table,
                        caption = "IV-LP vs OLS-LP: EUR/CHF Response Comparison",
                        label = "tab:irf_hf_comparison",
-                       align = c("l", "c", rep("r", ncol(comp_table) - 1)))
+                       align = c("l", "l", rep("r", ncol(comp_table) - 1)))
 print(comp_xtable,
       file = file.path(ext_dir, "output/tables/irf_hf_comparison.tex"),
       include.rownames = FALSE, caption.placement = "top",
-      booktabs = TRUE, sanitize.text.function = identity,
-      size = "small")
+      booktabs = TRUE, sanitize.text.function = identity)
 
 cat("  Extension 1 complete.\n")

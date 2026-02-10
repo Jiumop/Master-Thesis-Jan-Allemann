@@ -251,29 +251,30 @@ ggsave(file.path(ext_dir, "output/figures/placebo_cpi.pdf"),
 # --------------------------------------------------------------------------
 # STEP 5: Results table
 # --------------------------------------------------------------------------
+sel_h <- c(1, 3, 6, 12)
 placebo_table <- data.frame(
-  Horizon = horizons,
-  Actual_FX = sprintf("%.2f", actual_betas_fx),
-  Placebo_FX = sprintf("%.2f", placebo_fx$beta),
-  Perm_pval_FX = sprintf("%.3f", perm_pval_fx),
-  Actual_CPI = sprintf("%.2f", actual_betas_cpi),
-  Placebo_CPI = sprintf("%.2f", placebo_cpi$beta),
-  Perm_pval_CPI = sprintf("%.3f", perm_pval_cpi)
-) %>%
-  filter(Horizon %in% c(1, 3, 6, 12))
-
-colnames(placebo_table) <- c("Horizon",
-                              "Actual (FX)", "Placebo (FX)", "Perm. p (FX)",
-                              "Actual (CPI)", "Placebo (CPI)", "Perm. p (CPI)")
+  Variable = c("Actual (FX)", "Placebo (FX)", "Perm.~p (FX)",
+               "Actual (CPI)", "Placebo (CPI)", "Perm.~p (CPI)"),
+  stringsAsFactors = FALSE
+)
+for (h in sel_h) {
+  placebo_table[[paste0("h = ", h)]] <- c(
+    sprintf("%.2f", actual_betas_fx[h]),
+    sprintf("%.2f", placebo_fx$beta[placebo_fx$horizon == h]),
+    sprintf("%.3f", perm_pval_fx[h]),
+    sprintf("%.2f", actual_betas_cpi[h]),
+    sprintf("%.2f", placebo_cpi$beta[placebo_cpi$horizon == h]),
+    sprintf("%.3f", perm_pval_cpi[h])
+  )
+}
 
 placebo_xtable <- xtable(placebo_table,
                           caption = "Placebo and Permutation Tests: Comparison of Responses",
                           label = "tab:placebo_results",
-                          align = c("l", "c", rep("r", 6)))
+                          align = c("l", "l", rep("r", length(sel_h))))
 print(placebo_xtable,
       file = file.path(ext_dir, "output/tables/placebo_results.tex"),
       include.rownames = FALSE, caption.placement = "top",
-      booktabs = TRUE, sanitize.text.function = identity,
-      size = "small")
+      booktabs = TRUE, sanitize.text.function = identity)
 
 cat("  Extension 4 complete.\n")
