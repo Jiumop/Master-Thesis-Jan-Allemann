@@ -4,7 +4,6 @@
 
 **University of Bern, Faculty of Economics**
 Master in International and Monetary Economics
-Supervisor: Prof. Dr. Costanza Naguib
 
 ---
 
