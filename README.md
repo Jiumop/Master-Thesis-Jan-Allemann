@@ -222,6 +222,18 @@ Swiss calibration: beta=0.995, sigma=1.32, openness=0.40 (Cuche-Curti et al., 20
 
 #### 2. Data
 
+The dataset spans **January 2000 to December 2025** (~300 monthly observations, 109 announcement events, 19 rate cuts). Data sources:
+
+| Variable | Source |
+|----------|--------|
+| EUR/CHF exchange rate (daily & hourly) | TwelveData API |
+| CPI inflation (YoY) | Federal Statistical Office (BFS) |
+| SNB policy rates & LIBOR target ranges | SNB Statistical Data Portal |
+| KOF Economic Barometer | KOF Swiss Economic Institute, ETH Zurich |
+| 2-Year government bond yield | SNB |
+| VIX volatility index | CBOE |
+| Announcement dates & rate actions | SNB press releases & monetary policy assessments |
+
 | Dataset | Frequency | Period | Description |
 |---------|-----------|--------|-------------|
 | `swiss_monetary_monthly.csv` | Monthly | 2000–2025 | CPI (YoY), KOF Barometer, 2Y yield, VIX, EUR/CHF |
