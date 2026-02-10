@@ -65,18 +65,22 @@ Transmission differs sharply between positive and negative interest rate environ
 
 ### Extension Results
 
+The seven extensions refine the main findings along three dimensions: **identification**, **inference**, and **heterogeneity**. The most robust result across all methods is the immediate ~4.5% depreciation per pp shock. Full discussion with RQ linkage is in `extensions/doc/extensions_paper.pdf`.
+
 #### Ext. 1 — High-Frequency IV Identification
 
-First-stage F-statistic = 0.62 (weak instrument). IV-LP estimates are imprecise due to the small sample (25 events with hourly data, 2020+), confirming that the OLS-LP baseline with purging regression remains the preferred specification:
+First-stage F-statistic = 0.62 (weak instrument, well below the threshold of 10). The intraday EUR/CHF surprise is not a strong predictor of the monthly purging-regression residual, likely because (i) only 25 events have hourly data (2020+) and (ii) the hourly market reaction does not map linearly onto the monthly shock. IV-LP estimates are consequently uninformative:
 
 | Method | h = 1 | h = 3 | h = 6 | h = 12 |
 |--------|-------|-------|-------|--------|
 | IV-LP (HF) | -30.61 (47.50) | -26.86 (66.92) | -79.30 (82.95) | -451.07 (2831.50) |
 | OLS-LP | -2.79 (2.12) | -9.68\*\*\* (1.89) | -3.62 (3.25) | 17.48\*\*\* (5.02) |
 
+> **Takeaway:** The IV failure does not invalidate the baseline --- it underscores the sample constraint. The purging regression remains the most feasible identification strategy with available data.
+
 #### Ext. 2 — Smooth Transition LPs
 
-With logistic transition (gamma=5, threshold=0%), the low-rate regime shows larger but noisier responses:
+With logistic transition (gamma=5, threshold=0%), the normal-rate regime estimates (4.22% at h=1) closely match the pooled baseline (4.53%) and are **stable across all gamma values**. Low-rate estimates are large but imprecise, and **sensitive to gamma**, confirming that the regime asymmetry is driven by few extreme observations (2015 floor removal) rather than a smooth structural shift:
 
 | Horizon | Low-Rate Regime | Normal-Rate Regime | Difference |
 |---------|-----------------|-------------------|------------|
@@ -85,9 +89,11 @@ With logistic transition (gamma=5, threshold=0%), the low-rate regime shows larg
 | 6 | 9.63 (8.71) | 2.20 (1.28) | +7.43 |
 | 12 | -14.89 (8.33) | 1.77 (1.84) | -16.66 |
 
+> **Takeaway:** Strengthens the ~4% core finding under normal rates. Supports the thesis's cautious interpretation that negative-rate regime differences reflect the 2015 episode rather than general ELB properties. Aligns with the DSGE model's prediction of minimal regime differences.
+
 #### Ext. 3 — Wild Bootstrap CIs
 
-Bootstrap confidence intervals are wider than Newey-West, especially at short horizons:
+The Rademacher wild bootstrap (B=999) produces wider CIs than Newey-West, refining the significance assessment:
 
 | Horizon | Coeff | NW 95% CI | NW p | Bootstrap 95% CI | Boot p |
 |---------|-------|-----------|------|-----------------|--------|
@@ -96,11 +102,11 @@ Bootstrap confidence intervals are wider than Newey-West, especially at short ho
 | 6 | 2.75 | [0.20, 5.30] | 0.034 | [-0.47, 8.08] | 0.293 |
 | 12 | 0.57 | [-4.15, 5.29] | 0.813 | [-2.36, 9.08] | 0.848 |
 
-> The h=1 result remains significant under the wild bootstrap (p=0.025), while h=3 and h=6 lose significance — suggesting Newey-West may be slightly optimistic in small samples.
+> **Takeaway:** The **impact effect (h=1) is robust** to inference method (p=0.025). Persistence beyond 1 month (h=3, h=6) should be interpreted more cautiously --- Newey-West appears optimistic in this small sample. This narrows the main finding from "significant through 6 months" to **"robust impact depreciation with suggestive persistence."**
 
 #### Ext. 4 — Placebo / Falsification Tests
 
-Placebo shocks (from no-change meetings) show no significant effects, supporting identification validity:
+Placebo shocks (fitted values from 68 no-change meetings) produce near-zero responses, while the permutation test (N=500) provides direct falsification evidence:
 
 | Variable | h = 1 | h = 3 | h = 6 | h = 12 |
 |----------|-------|-------|-------|--------|
@@ -108,11 +114,11 @@ Placebo shocks (from no-change meetings) show no significant effects, supporting
 | Placebo (FX) | -0.57 | 0.97 | 1.49 | 2.06 |
 | Perm. p (FX) | **0.018** | 0.116 | 0.344 | 0.878 |
 
-> Permutation test rejects the null at h=1 (p=0.018), confirming the actual shock effect is unlikely due to chance.
+> **Takeaway:** The **strongest validation of the identification strategy**. Anticipated policy (fitted values) generates no FX response; the actual shock is significant in only 1.8% of random permutations at h=1. This confirms that the purging regression isolates genuine policy surprises, at least at impact. Declining permutation significance at longer horizons is consistent with the bootstrap results.
 
 #### Ext. 5 — Information Effects
 
-Decomposing shocks into pure monetary vs information components reveals that information shocks generate larger but shorter-lived FX responses:
+Decomposing shocks via yield co-movement (simplified Jarocinski-Karadi approach) reveals that the baseline estimates blend two distinct channels:
 
 | Component | h = 1 | h = 3 | h = 6 | h = 12 |
 |-----------|-------|-------|-------|--------|
@@ -120,6 +126,8 @@ Decomposing shocks into pure monetary vs information components reveals that inf
 | Information (FX) | 6.60 | 6.37 | 1.19 | 3.70 |
 | Pure MP (CPI) | 0.06 | -0.24 | 0.25 | -0.08 |
 | Information (CPI) | 0.91 | 0.49 | -1.75 | -2.32 |
+
+> **Takeaway:** Pure MP shocks produce **4.3% FX depreciation and near-zero CPI effects** --- closely matching the DSGE model's predictions and validating its incomplete pass-through mechanism (9% immediate pass-through) even more strongly than the pooled results. Information shocks generate larger but less persistent FX effects, and a CPI sign reversal (initial inflation then disinflation) consistent with markets learning negative economic news. This suggests the **DSGE model is well-calibrated to the pure monetary channel** (RQ2).
 
 #### Ext. 6 — Additional Outcome Variables
 
@@ -129,7 +137,7 @@ Decomposing shocks into pure monetary vs information components reveals that inf
 | 6 | -0.390 (0.247) | **-0.643\*\*\*** (0.141) | -4.591 (4.707) |
 | 12 | 0.290 (0.276) | -0.002 (0.189) | -1.113 (4.141) |
 
-> 10-year yields decline significantly at 6 months (-0.64pp), indicating term structure transmission.
+> **Takeaway:** The **10-year yield declines significantly at 6 months (-0.64pp, p<0.01)**, validating the DSGE model's expectations channel: rate cuts transmit to longer maturities through expectations, with the full effect materializing at 6 months. KOF responses are noisy, reflecting the endogeneity of rate cuts to economic weakness. The 2Y yield's initial positive response is consistent with the information effect channel (Section 5).
 
 #### Ext. 7 — Asymmetry Tests
 
@@ -140,6 +148,8 @@ No statistically significant asymmetry by sign or size (all Wald p-values > 0.10
 | 1 | 3.13\* | 6.83\*\* | 0.300 | 3.56\*\* | 23.04 | 0.375 |
 | 3 | 3.06 | 4.52\* | 0.711 | 2.50\*\* | 24.96 | 0.316 |
 | 12 | -4.10 | 8.14 | 0.265 | -0.88 | 33.88 | 0.130 |
+
+> **Takeaway:** The **linear specification is justified** --- the 4.5% depreciation applies symmetrically to cuts/hikes and large/small shocks. This importantly distinguishes shock-level symmetry (not rejected) from the regime-level asymmetry (strongly significant in the thesis), confirming that regime dependence operates through structural changes (2015 floor removal) rather than nonlinear responses to shock characteristics. Quantile regression at the median (3.04\*\*\* at h=1) confirms the mean result.
 
 ---
 
