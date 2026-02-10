@@ -273,6 +273,7 @@ placebo_xtable <- xtable(placebo_table,
 print(placebo_xtable,
       file = file.path(ext_dir, "output/tables/placebo_results.tex"),
       include.rownames = FALSE, caption.placement = "top",
-      booktabs = TRUE, sanitize.text.function = identity)
+      booktabs = TRUE, sanitize.text.function = identity,
+      size = "small")
 
 cat("  Extension 4 complete.\n")

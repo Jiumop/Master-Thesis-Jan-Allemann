@@ -229,6 +229,7 @@ comp_xtable <- xtable(comp_table,
 print(comp_xtable,
       file = file.path(ext_dir, "output/tables/irf_hf_comparison.tex"),
       include.rownames = FALSE, caption.placement = "top",
-      booktabs = TRUE, sanitize.text.function = identity)
+      booktabs = TRUE, sanitize.text.function = identity,
+      size = "small")
 
 cat("  Extension 1 complete.\n")

@@ -174,6 +174,7 @@ out_xtable <- xtable(out_table,
 print(out_xtable,
       file = file.path(ext_dir, "output/tables/additional_outcomes.tex"),
       include.rownames = FALSE, caption.placement = "top",
-      booktabs = TRUE, sanitize.text.function = identity)
+      booktabs = TRUE, sanitize.text.function = identity,
+      size = "small")
 
 cat("  Extension 6 complete.\n")
