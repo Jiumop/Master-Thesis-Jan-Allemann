@@ -156,26 +156,22 @@ add_stars <- function(beta, se, n = 250) {
   )
 }
 
-sel_h <- c(1, 3, 6, 12)
-out_rows <- list()
+short_labels <- c("yield_2y" = "2Y Yield", "yield_10y" = "10Y Yield", "kof" = "KOF")
+
+out_table <- data.frame(Horizon = c(1, 3, 6, 12))
 for (out in outcomes) {
   v <- out$var
-  res <- all_results[[v]] %>% filter(horizon %in% sel_h)
-  row <- data.frame(Outcome = out$label, stringsAsFactors = FALSE)
-  for (i in seq_along(sel_h)) {
-    row[[paste0("h = ", sel_h[i])]] <- sprintf("%.3f%s (%.3f)",
-                                                res$beta[i],
-                                                add_stars(res$beta[i], res$se[i]),
-                                                res$se[i])
-  }
-  out_rows[[length(out_rows) + 1]] <- row
+  res <- all_results[[v]] %>% filter(horizon %in% c(1, 3, 6, 12))
+  out_table[[short_labels[v]]] <- sprintf("%.3f%s (%.3f)",
+                                           res$beta,
+                                           add_stars(res$beta, res$se),
+                                           res$se)
 }
-out_table <- bind_rows(out_rows)
 
 out_xtable <- xtable(out_table,
                       caption = "Additional Outcome Variables: LP Impulse Responses to 1pp Rate Cut",
                       label = "tab:additional_outcomes",
-                      align = c("l", "l", rep("r", length(sel_h))))
+                      align = c("l", "c", rep("r", length(outcomes))))
 print(out_xtable,
       file = file.path(ext_dir, "output/tables/additional_outcomes.tex"),
       include.rownames = FALSE, caption.placement = "top",
