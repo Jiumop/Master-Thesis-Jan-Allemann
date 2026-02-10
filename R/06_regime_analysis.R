@@ -9,9 +9,10 @@ library(car)
 library(xtable)
 library(ggplot2)
 
-setwd("C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R")
+base_dir <- "C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R"
+setwd(base_dir)
 
-load("local_projections.RData")
+load("cache/local_projections.RData")
 
 #local projections
 if(exists("control_formula")) {
@@ -193,4 +194,4 @@ print(xtable(regime_cpi_table,
       sanitize.text.function = identity)
 
 save(regime_fx_results, regime_cpi_results, fx_regime_long, cpi_regime_long,
-     file = "regime_analysis.RData")
+     file = "cache/regime_analysis.RData")

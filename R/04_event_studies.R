@@ -8,10 +8,11 @@ library(lubridate)
 library(lmtest)
 library(sandwich)
 
-setwd("C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R")
+base_dir <- "C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R"
+setwd(base_dir)
 
-load("prepared_data.RData")
-load("shock_identification.RData")
+load("cache/prepared_data.RData")
+load("cache/shock_identification.RData")
 
 ################################################################################
 # DAILY EVENT STUDY - REGRESSION APPROACH
@@ -171,5 +172,5 @@ save(
   daily_event_results, 
   daily_cumulative, 
   hourly_event_results,
-  file = "event_study_results.RData"
+  file = "cache/event_study_results.RData"
 )

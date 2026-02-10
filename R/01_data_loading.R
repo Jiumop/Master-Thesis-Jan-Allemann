@@ -3,13 +3,16 @@
 ################################################################################
 
 rm(list = ls())
-setwd("C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R")
 
 library(tidyverse)
 library(lubridate)
 
-dir.create("output/tables", showWarnings = FALSE, recursive = TRUE)
+base_dir <- "C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R"
+setwd(base_dir)
+
+dir.create("output/tables",  showWarnings = FALSE, recursive = TRUE)
 dir.create("output/figures", showWarnings = FALSE, recursive = TRUE)
+dir.create("cache",          showWarnings = FALSE, recursive = TRUE)
 
 # datasets loading
 monthly_pure <- read.csv("data/swiss_monetary_monthly.csv", stringsAsFactors = FALSE)
@@ -112,5 +115,5 @@ if(length(hourly_events) > 0) {
   hourly_event_data <- data.frame()
 }
 
-save(monthly, announcements, rate_cuts, rate_changes, daily_event_data, hourly_event_data, 
-      file = "prepared_data.RData")
+save(monthly, announcements, rate_cuts, rate_changes, daily_event_data, hourly_event_data,
+      file = "cache/prepared_data.RData")

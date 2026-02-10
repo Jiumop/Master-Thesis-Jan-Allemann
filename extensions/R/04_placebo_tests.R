@@ -15,7 +15,7 @@ cat("\n=== Extension 4: Placebo / Falsification Tests ===\n")
 base_dir <- "C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R"
 ext_dir  <- file.path(base_dir, "extensions")
 
-load(file.path(base_dir, "shock_identification.RData"))
+load(file.path(base_dir, "cache/shock_identification.RData"))
 
 if (exists("control_formula")) {
   ctrl <- control_formula
@@ -125,7 +125,7 @@ set.seed(42)
 n_perm <- 500
 
 # Store actual LP coefficients for comparison
-load(file.path(base_dir, "local_projections.RData"))
+load(file.path(base_dir, "cache/local_projections.RData"))
 actual_betas_fx  <- lp_fx_results$beta
 actual_betas_cpi <- lp_cpi_results$beta
 

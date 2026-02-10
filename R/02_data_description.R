@@ -8,10 +8,11 @@ library(gridExtra)
 library(scales)
 library(xtable)
 
-setwd("C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R")
+base_dir <- "C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R"
+setwd(base_dir)
 theme_set(theme_minimal(base_size = 12))
 
-load("prepared_data.RData")
+load("cache/prepared_data.RData")
 
 # Summary statistics table
 summary_stats <- monthly %>%

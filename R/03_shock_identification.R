@@ -9,9 +9,10 @@ library(stargazer)
 library(ggplot2)
 library(ranger)
 
-setwd("C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R")
+base_dir <- "C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R"
+setwd(base_dir)
 
-load("prepared_data.RData")
+load("cache/prepared_data.RData")
 
 # STEP 1: VARIABLE IMPORTANCE ANALYSIS FOR CONTROL SELECTION
 ml_data_selection <- monthly %>%
@@ -120,4 +121,4 @@ stargazer(purge_main,
           omit.stat = c("f", "ser"))
 
 save(monthly_full, purge_main, rate_cuts, monthly_cuts, importance_df, control_vars, control_formula,
-     file = "shock_identification.RData")
+     file = "cache/shock_identification.RData")

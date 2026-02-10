@@ -16,8 +16,8 @@ cat("\n=== Extension 5: Information Effects ===\n")
 base_dir <- "C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R"
 ext_dir  <- file.path(base_dir, "extensions")
 
-load(file.path(base_dir, "shock_identification.RData"))
-load(file.path(base_dir, "local_projections.RData"))
+load(file.path(base_dir, "cache/shock_identification.RData"))
+load(file.path(base_dir, "cache/local_projections.RData"))
 
 if (exists("control_formula")) {
   ctrl <- control_formula

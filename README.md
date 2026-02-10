@@ -66,6 +66,8 @@ Three main findings emerge:
 │   ├── EUR_CHF_1day.csv              # Daily EUR/CHF exchange rate
 │   └── EUR_CHF_1h.csv                # Hourly EUR/CHF exchange rate
 │
+├── cache/                            # Pipeline intermediates (.RData, gitignored)
+│
 ├── output/
 │   ├── figures/                      # Generated plots (PDF)
 │   └── tables/                       # Generated LaTeX tables
@@ -221,7 +223,7 @@ source("run_all.R")
 source("extensions/run_extensions.R")
 ```
 
-The core pipeline executes all 8 scripts sequentially. Intermediate `.RData` files are saved in the working directory and output is written to `output/figures/` and `output/tables/`. The extensions pipeline then builds on these `.RData` files and writes to `extensions/output/`.
+The core pipeline executes all 8 scripts sequentially. Intermediate `.RData` files are saved in `cache/` (gitignored) and output is written to `output/figures/` and `output/tables/`. The extensions pipeline then builds on these cached `.RData` files and writes to `extensions/output/`.
 
 ### Requirements
 

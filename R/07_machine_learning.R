@@ -6,9 +6,10 @@ library(tidyverse)
 library(grf)
 library(ggplot2)
 
-setwd("C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R")
+base_dir <- "C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R"
+setwd(base_dir)
 
-load("local_projections.RData")
+load("cache/local_projections.RData")
 
 # ML dataset
 ml_data <- monthly_full %>%
@@ -116,4 +117,4 @@ if(exists("prediction_results")) {
   ml_results$prediction_results <- prediction_results
 }
 
-save(ml_results, file = "machine_learning.RData")
+save(ml_results, file = "cache/machine_learning.RData")

@@ -8,9 +8,10 @@ library(lmtest)
 library(xtable)
 library(ggplot2)
 
-setwd("C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R")
+base_dir <- "C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R"
+setwd(base_dir)
 
-load("shock_identification.RData")
+load("cache/shock_identification.RData")
 
 # control formula based on variable importance
 if(exists("control_vars")) {
@@ -175,4 +176,4 @@ print(xtable(irf_cpi_table,
       booktabs = TRUE,
       sanitize.text.function = identity)
 
-save(lp_fx_results, lp_cpi_results, monthly_full, file = "local_projections.RData")
+save(lp_fx_results, lp_cpi_results, monthly_full, file = "cache/local_projections.RData")

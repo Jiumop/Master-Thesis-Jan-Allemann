@@ -8,8 +8,9 @@ library(lmtest)
 library(xtable)
 library(car)
 
-setwd("C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R")
-load("shock_identification.RData")
+base_dir <- "C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R"
+setwd(base_dir)
+load("cache/shock_identification.RData")
 horizons <- c(1, 2, 6, 12)  
 
 for(h in horizons) {
@@ -97,7 +98,7 @@ for(h in horizons) {
 ################################################################################
 # SPECIFICATION 3: FULL CONTROLS
 ################################################################################
-load("local_projections.RData")
+load("cache/local_projections.RData")
 
 results_full_fx <- lp_fx_results %>% filter(horizon %in% horizons)
 results_full_cpi <- lp_cpi_results %>% filter(horizon %in% horizons)
@@ -151,7 +152,7 @@ for(h in horizons) {
 # REGIME RESULTS WITH FULL CONTROLS (for comparison)
 ################################################################################
 
-load("regime_analysis.RData")
+load("cache/regime_analysis.RData")
 
 regime_full_fx <- regime_fx_results %>% filter(horizon %in% horizons)
 regime_full_cpi <- regime_cpi_results %>% filter(horizon %in% horizons)
@@ -282,4 +283,4 @@ save(results_nocontrol_fx, results_nocontrol_cpi,
      results_lagged_fx, results_lagged_cpi,
      regime_lagged_fx, regime_lagged_cpi,
      comparison_fx, comparison_cpi,
-     file = "robustness_controls.RData")
+     file = "cache/robustness_controls.RData")

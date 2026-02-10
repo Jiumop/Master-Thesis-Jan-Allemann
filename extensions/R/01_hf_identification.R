@@ -15,9 +15,9 @@ cat("\n=== Extension 1: High-Frequency Identification ===\n")
 base_dir <- "C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R"
 ext_dir  <- file.path(base_dir, "extensions")
 
-load(file.path(base_dir, "shock_identification.RData"))
-load(file.path(base_dir, "local_projections.RData"))
-load(file.path(base_dir, "prepared_data.RData"))
+load(file.path(base_dir, "cache/shock_identification.RData"))
+load(file.path(base_dir, "cache/local_projections.RData"))
+load(file.path(base_dir, "cache/prepared_data.RData"))
 
 # --------------------------------------------------------------------------
 # STEP 1: Compute HF surprise from hourly EUR/CHF data

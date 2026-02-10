@@ -17,8 +17,8 @@ base_dir <- "C:/Users/jan-a/Desktop/Masterthesis_final/Data_Analysis_R"
 ext_dir  <- file.path(base_dir, "extensions")
 
 # Verify prerequisites
-required_files <- c("prepared_data.RData", "shock_identification.RData",
-                    "local_projections.RData")
+required_files <- c("cache/prepared_data.RData", "cache/shock_identification.RData",
+                    "cache/local_projections.RData")
 missing <- required_files[!file.exists(file.path(base_dir, required_files))]
 
 if (length(missing) > 0) {
