@@ -222,7 +222,7 @@ st_table <- st_results_fx %>%
 colnames(st_table) <- c("Horizon", "Low-Rate Regime", "Normal-Rate Regime", "Difference")
 
 st_xtable <- xtable(st_table,
-                     caption = sprintf("Smooth Transition LP: EUR/CHF Response (gamma = %d, c = 0%%)", preferred_gamma),
+                     caption = sprintf("Smooth Transition LP: EUR/CHF Response (gamma = %d, c = 0\\%%)", preferred_gamma),
                      label = "tab:smooth_transition_results",
                      align = c("l", "c", "r", "r", "r"))
 print(st_xtable,

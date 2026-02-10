@@ -104,11 +104,11 @@ cat(sprintf("  Instrument relevance: %s\n",
 
 # First-stage table
 fs_table <- data.frame(
-  Variable = rownames(fs_robust),
-  Estimate = sprintf("%.4f", fs_robust[, 1]),
-  SE       = sprintf("(%.4f)", fs_robust[, 2]),
-  t_stat   = sprintf("%.2f", fs_robust[, 3]),
-  p_value  = sprintf("%.3f", fs_robust[, 4])
+  Variable  = gsub("_", "\\\\_", rownames(fs_robust)),
+  Estimate  = sprintf("%.4f", fs_robust[, 1]),
+  SE        = sprintf("(%.4f)", fs_robust[, 2]),
+  t.stat    = sprintf("%.2f", fs_robust[, 3]),
+  p.value   = sprintf("%.3f", fs_robust[, 4])
 )
 
 fs_xtable <- xtable(fs_table,
@@ -218,6 +218,9 @@ comp_table <- combined %>%
   filter(horizon %in% c(1, 3, 6, 12)) %>%
   select(horizon, method, coef_fmt, se_fmt) %>%
   pivot_wider(names_from = method, values_from = c(coef_fmt, se_fmt))
+
+# Clean column names for LaTeX
+colnames(comp_table) <- gsub("_", " ", colnames(comp_table))
 
 comp_xtable <- xtable(comp_table,
                        caption = "IV-LP vs OLS-LP: EUR/CHF Response Comparison",
