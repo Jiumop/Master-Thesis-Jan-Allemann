@@ -7,3 +7,14 @@ Rplots.pdf
 .RData
 .Ruserdata
 .Rproj.user/
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.bbl
+*.blg
+*.out
+*.toc
+*.fdb_latexmk
+*.fls
+*.synctex.gz

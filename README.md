@@ -33,7 +33,7 @@ Three main findings emerge:
 ```
 ├── run_all.R                         # Master script — runs entire pipeline
 │
-├── R/                                # Analysis scripts (execute in order)
+├── R/                                # Core analysis scripts (execute in order)
 │   ├── 01_data_loading.R             # Load & merge monthly, daily, hourly data
 │   ├── 02_data_description.R         # Descriptive statistics & visualizations
 │   ├── 03_shock_identification.R     # MP shock identification (purging + RF)
@@ -42,6 +42,23 @@ Three main findings emerge:
 │   ├── 06_regime_analysis.R          # Positive vs negative rate regime comparison
 │   ├── 07_machine_learning.R         # Causal Forest for heterogeneous effects
 │   └── 08_robustness.R              # Robustness across control specifications
+│
+├── extensions/                       # 7 methodological extensions (self-contained)
+│   ├── run_extensions.R              # Master script for all extensions
+│   ├── R/
+│   │   ├── 01_hf_identification.R    # High-frequency IV estimation (2SLS)
+│   │   ├── 02_smooth_transition.R    # Smooth transition local projections
+│   │   ├── 03_wild_bootstrap.R       # Wild bootstrap confidence intervals
+│   │   ├── 04_placebo_tests.R        # Placebo / falsification tests
+│   │   ├── 05_information_effects.R  # Info vs pure MP shock decomposition
+│   │   ├── 06_additional_outcomes.R  # LPs for yields and KOF barometer
+│   │   └── 07_asymmetry_tests.R      # Size & sign asymmetry + quantile regression
+│   ├── output/
+│   │   ├── figures/                  # Extension plots (17 PDFs)
+│   │   └── tables/                   # Extension LaTeX tables (9 files)
+│   └── doc/
+│       ├── extensions_paper.tex      # Self-contained LaTeX companion document
+│       └── ref_ext.bib               # Bibliography for extensions
 │
 ├── data/                             # Input datasets
 │   ├── swiss_monetary_monthly.csv    # Monthly macro indicators (CPI, KOF, yields, etc.)
@@ -111,6 +128,24 @@ Regime-dependent results are also re-estimated under alternative specifications 
 
 ---
 
+### Methodological Extensions
+
+Seven self-contained extensions complement the core analysis. They are located in `extensions/` and require the core pipeline to have run first (to generate the `.RData` files).
+
+| # | Extension | Method | Key Output |
+|---|-----------|--------|------------|
+| 1 | **High-Frequency Identification** | IV-LP using intraday EUR/CHF in [-1h, +1h] around 09:30 CET announcements as instrument for mp_shock (2SLS) | `irf_hf_vs_baseline.pdf`, first-stage diagnostics |
+| 2 | **Smooth Transition LPs** | Logistic transition function G(policy_rate; gamma, c=0%) replaces hard regime dummy; grid search over gamma = {1, 3, 5, 10} | `irf_smooth_transition_fx.pdf`, `transition_function.pdf` |
+| 3 | **Wild Bootstrap CIs** | Rademacher wild bootstrap (B=999) under imposed null for LP standard errors; percentile-t confidence intervals | `irf_bootstrap_fx.pdf`, NW vs bootstrap comparison |
+| 4 | **Placebo / Falsification** | LPs on predicted component from no-change meetings + permutation test (N=500 random reassignments) | `placebo_fx.pdf`, permutation p-values |
+| 5 | **Information Effects** | Shock decomposition into pure MP vs information components via yield co-movement sign restrictions (Jarocinski-Karadi approach) | `info_vs_mp_classification.pdf`, separate IRFs |
+| 6 | **Additional Outcomes** | LPs for 2Y yield, 10Y yield, and KOF barometer to trace full transmission mechanism | `irf_all_outcomes.pdf` (multi-panel) |
+| 7 | **Asymmetry Tests** | Sign asymmetry (cuts vs hikes), size asymmetry (large vs small), Wald tests at each horizon, quantile regression at tau = {0.25, 0.50, 0.75} | `irf_sign_asymmetry_fx.pdf`, `irf_size_asymmetry_fx.pdf` |
+
+A self-contained LaTeX companion document (`extensions/doc/extensions_paper.tex`) presents all results with motivation, methodology, and discussion for each extension.
+
+---
+
 ### Key Output
 
 #### Figures
@@ -140,29 +175,66 @@ Regime-dependent results are also re-estimated under alternative specifications 
 | `lp_fx_regime.tex` / `lp_cpi_regime.tex` | Regime-dependent IRF coefficients with Wald tests |
 | `robustness_fx.tex` / `robustness_cpi.tex` | Robustness across control specifications |
 
+#### Extension Figures (`extensions/output/figures/`)
+
+| Figure | Description |
+|--------|-------------|
+| `irf_hf_vs_baseline.pdf` | IV-LP vs OLS-LP impulse response comparison |
+| `transition_function.pdf` | Logistic transition function for different gamma values |
+| `irf_smooth_transition_fx.pdf` / `_cpi.pdf` | Smooth transition LP impulse responses by regime |
+| `irf_bootstrap_fx.pdf` / `_cpi.pdf` | Newey-West vs wild bootstrap confidence intervals |
+| `placebo_fx.pdf` / `_cpi.pdf` | Placebo and permutation test results |
+| `info_vs_mp_classification.pdf` | Shock classification scatter plot |
+| `irf_info_vs_mp_fx.pdf` / `_cpi.pdf` | Pure MP vs information shock IRFs |
+| `irf_all_outcomes.pdf` | Multi-panel IRFs across all transmission channels |
+| `irf_yield_2y.pdf` / `irf_yield_10y.pdf` / `irf_kof.pdf` | Individual outcome IRFs |
+| `irf_sign_asymmetry_fx.pdf` | Sign asymmetry: easing vs tightening |
+| `irf_size_asymmetry_fx.pdf` | Size asymmetry: large vs small shocks |
+
+#### Extension Tables (`extensions/output/tables/`)
+
+| Table | Description |
+|-------|-------------|
+| `hf_first_stage.tex` | First-stage IV diagnostics |
+| `irf_hf_comparison.tex` | IV-LP vs OLS-LP coefficient comparison |
+| `smooth_transition_results.tex` | Smooth transition LP results |
+| `bootstrap_comparison.tex` | Bootstrap vs Newey-West CI comparison |
+| `placebo_results.tex` | Placebo and permutation test p-values |
+| `info_effects_results.tex` | Information vs pure MP shock responses |
+| `additional_outcomes.tex` | Additional outcome variable IRFs |
+| `asymmetry_results.tex` | Sign and size asymmetry Wald tests |
+| `quantile_regression.tex` | Quantile regression at tau = {0.25, 0.50, 0.75} |
+
 ---
 
 ### How to Run
 
-1. Open R or RStudio
-2. Run the full pipeline:
+**Core pipeline** (8 scripts):
 
 ```r
 source("run_all.R")
 ```
 
-This executes all 8 scripts sequentially. Intermediate `.RData` files are saved in the working directory and output is written to `output/figures/` and `output/tables/`.
+**Extensions** (7 scripts, requires core pipeline to finish first):
+
+```r
+source("extensions/run_extensions.R")
+```
+
+The core pipeline executes all 8 scripts sequentially. Intermediate `.RData` files are saved in the working directory and output is written to `output/figures/` and `output/tables/`. The extensions pipeline then builds on these `.RData` files and writes to `extensions/output/`.
 
 ### Requirements
 
 - **R** (>= 4.0)
-- **Packages:** tidyverse, ggplot2, lubridate, sandwich, lmtest, car, xtable, stargazer, ranger, grf, gridExtra, scales
+- **Core packages:** tidyverse, ggplot2, lubridate, sandwich, lmtest, car, xtable, stargazer, ranger, grf, gridExtra, scales
+- **Extension packages:** ivreg, quantreg (installed automatically by `run_extensions.R` if missing)
 
 Install all dependencies:
 
 ```r
 install.packages(c("tidyverse", "lubridate", "sandwich", "lmtest", "car",
-                    "xtable", "stargazer", "ranger", "grf", "gridExtra", "scales"))
+                    "xtable", "stargazer", "ranger", "grf", "gridExtra", "scales",
+                    "ivreg", "quantreg"))
 ```
 
 ---
