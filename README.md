@@ -21,10 +21,126 @@ Three main findings emerge:
 
 ---
 
-### Research Questions
+### Key Results
 
-- **RQ1:** What is the effect of an unexpected SNB rate cut on (i) the EUR/CHF exchange rate and (ii) Swiss inflation between 2000–2025?
-- **RQ2:** Can the transmission mechanisms of a Swiss-calibrated SOE DSGE model be empirically validated using structural identification combined with machine-learning methods?
+#### EUR/CHF Exchange Rate Response
+
+A 1 percentage point unexpected rate cut depreciates the Swiss franc significantly in the short run, with the effect fading over time:
+
+| Horizon | Coefficient | SE | 95% CI | p-value |
+|---------|------------|-----|--------|---------|
+| 1 month | **4.53\*\*\*** | 1.47 | [1.64, 7.42] | 0.002 |
+| 3 months | **3.61\*\*\*** | 1.32 | [1.02, 6.20] | 0.006 |
+| 6 months | **2.75\*\*** | 1.30 | [0.20, 5.30] | 0.035 |
+| 12 months | 0.57 | 2.01 | [-3.36, 4.51] | 0.776 |
+
+> Peak depreciation of **4.5% at 1 month**, statistically significant through 6 months, consistent with DSGE predictions but larger in magnitude.
+
+#### CPI Inflation Response
+
+Inflation responses to rate cuts are economically small and statistically insignificant in the pooled sample:
+
+| Horizon | Coefficient | SE | 95% CI | p-value |
+|---------|------------|-----|--------|---------|
+| 1 month | 0.14 | 0.29 | [-0.42, 0.70] | 0.627 |
+| 6 months | 0.07 | 0.44 | [-0.79, 0.93] | 0.870 |
+| 12 months | -0.29 | 0.58 | [-1.42, 0.85] | 0.618 |
+
+> Weak pass-through confirms the DSGE model's incomplete exchange rate pass-through and habit formation mechanisms.
+
+#### Regime-Dependent Transmission
+
+Transmission differs sharply between positive and negative interest rate environments:
+
+| | Positive Rates | Negative Rates | Wald p-value |
+|---|---|---|---|
+| **EUR/CHF (h=1)** | 4.13\*\*\* (1.26) | 11.22 (18.06) | 0.696 |
+| **EUR/CHF (h=12)** | 1.42 (1.86) | -13.32\*\* (6.73) | **0.032** |
+| **CPI (h=1)** | 0.07 (0.29) | 1.23\*\*\* (0.14) | **0.001** |
+| **CPI (h=6)** | -0.16 (0.45) | 3.92\*\*\* (0.54) | **0.000** |
+| **CPI (h=12)** | -0.66 (0.46) | 5.79\*\*\* (0.93) | **0.000** |
+
+> CPI responses under negative rates are large and highly significant (Wald F up to 40.24), but driven by the extraordinary 2015 EUR/CHF floor removal event.
+
+---
+
+### Extension Results
+
+#### Ext. 1 — High-Frequency IV Identification
+
+First-stage F-statistic = 0.62 (weak instrument). IV-LP estimates are imprecise due to the small sample (25 events with hourly data, 2020+), confirming that the OLS-LP baseline with purging regression remains the preferred specification:
+
+| Method | h = 1 | h = 3 | h = 6 | h = 12 |
+|--------|-------|-------|-------|--------|
+| IV-LP (HF) | -30.61 (47.50) | -26.86 (66.92) | -79.30 (82.95) | -451.07 (2831.50) |
+| OLS-LP | -2.79 (2.12) | -9.68\*\*\* (1.89) | -3.62 (3.25) | 17.48\*\*\* (5.02) |
+
+#### Ext. 2 — Smooth Transition LPs
+
+With logistic transition (gamma=5, threshold=0%), the low-rate regime shows larger but noisier responses:
+
+| Horizon | Low-Rate Regime | Normal-Rate Regime | Difference |
+|---------|-----------------|-------------------|------------|
+| 1 | 8.39 (15.75) | 4.22 (1.26) | +4.17 |
+| 3 | 16.11 (11.37) | 2.62 (1.08) | +13.49 |
+| 6 | 9.63 (8.71) | 2.20 (1.28) | +7.43 |
+| 12 | -14.89 (8.33) | 1.77 (1.84) | -16.66 |
+
+#### Ext. 3 — Wild Bootstrap CIs
+
+Bootstrap confidence intervals are wider than Newey-West, especially at short horizons:
+
+| Horizon | Coeff | NW 95% CI | NW p | Bootstrap 95% CI | Boot p |
+|---------|-------|-----------|------|-----------------|--------|
+| 1 | 4.53 | [2.17, 6.89] | 0.000 | [0.72, 8.88] | 0.025 |
+| 3 | 3.61 | [1.02, 6.20] | 0.006 | [-0.71, 9.23] | 0.128 |
+| 6 | 2.75 | [0.20, 5.30] | 0.034 | [-0.47, 8.08] | 0.293 |
+| 12 | 0.57 | [-4.15, 5.29] | 0.813 | [-2.36, 9.08] | 0.848 |
+
+> The h=1 result remains significant under the wild bootstrap (p=0.025), while h=3 and h=6 lose significance — suggesting Newey-West may be slightly optimistic in small samples.
+
+#### Ext. 4 — Placebo / Falsification Tests
+
+Placebo shocks (from no-change meetings) show no significant effects, supporting identification validity:
+
+| Variable | h = 1 | h = 3 | h = 6 | h = 12 |
+|----------|-------|-------|-------|--------|
+| Actual (FX) | 4.53 | 3.61 | 2.75 | 0.57 |
+| Placebo (FX) | -0.57 | 0.97 | 1.49 | 2.06 |
+| Perm. p (FX) | **0.018** | 0.116 | 0.344 | 0.878 |
+
+> Permutation test rejects the null at h=1 (p=0.018), confirming the actual shock effect is unlikely due to chance.
+
+#### Ext. 5 — Information Effects
+
+Decomposing shocks into pure monetary vs information components reveals that information shocks generate larger but shorter-lived FX responses:
+
+| Component | h = 1 | h = 3 | h = 6 | h = 12 |
+|-----------|-------|-------|-------|--------|
+| Pure MP (FX) | 4.33 | 3.34 | 2.90 | 0.25 |
+| Information (FX) | 6.60 | 6.37 | 1.19 | 3.70 |
+| Pure MP (CPI) | 0.06 | -0.24 | 0.25 | -0.08 |
+| Information (CPI) | 0.91 | 0.49 | -1.75 | -2.32 |
+
+#### Ext. 6 — Additional Outcome Variables
+
+| Horizon | 2Y Yield | 10Y Yield | KOF |
+|---------|----------|-----------|-----|
+| 1 | 0.119 (0.115) | -0.106 (0.216) | 2.919 (4.148) |
+| 6 | -0.390 (0.247) | **-0.643\*\*\*** (0.141) | -4.591 (4.707) |
+| 12 | 0.290 (0.276) | -0.002 (0.189) | -1.113 (4.141) |
+
+> 10-year yields decline significantly at 6 months (-0.64pp), indicating term structure transmission.
+
+#### Ext. 7 — Asymmetry Tests
+
+No statistically significant asymmetry by sign or size (all Wald p-values > 0.10):
+
+| Horizon | Cuts | Hikes | Sign Wald p | Large | Small | Size Wald p |
+|---------|------|-------|-------------|-------|-------|-------------|
+| 1 | 3.13\* | 6.83\*\* | 0.300 | 3.56\*\* | 23.04 | 0.375 |
+| 3 | 3.06 | 4.52\* | 0.711 | 2.50\*\* | 24.96 | 0.316 |
+| 12 | -4.10 | 8.14 | 0.265 | -0.88 | 33.88 | 0.130 |
 
 ---
 
@@ -58,7 +174,16 @@ Three main findings emerge:
 │   │   └── tables/                   # Extension LaTeX tables (9 files)
 │   └── doc/
 │       ├── extensions_paper.tex      # Self-contained LaTeX companion document
+│       ├── extensions_paper.pdf      # Compiled extensions document
 │       └── ref_ext.bib               # Bibliography for extensions
+│
+├── Dynare/                           # DSGE model simulations
+│   ├── dsge_gali.mod                 # Baseline Galí (2015) specification
+│   ├── dsge_swiss_base.mod           # Swiss-calibrated model (Cuche-Curti et al.)
+│   ├── dsge_full_rega.mod            # Regime A: positive interest rates
+│   ├── dsge_full_regb.mod            # Regime B: negative/zero interest rates
+│   ├── dsge_unstable.mod             # Stability test with extreme ER leaning
+│   └── IRF_figures.m                 # MATLAB script for IRF visualization
 │
 ├── data/                             # Input datasets
 │   ├── swiss_monetary_monthly.csv    # Monthly macro indicators (CPI, KOF, yields, etc.)
@@ -82,7 +207,21 @@ Three main findings emerge:
 
 ### Methodology
 
-#### 1. Data
+#### 1. DSGE Model (`Dynare/`)
+
+A small open economy New Keynesian DSGE model is calibrated to Switzerland using Dynare/MATLAB. Five model variants are estimated:
+
+| Model | Key Features | Purpose |
+|-------|-------------|---------|
+| **Galí Baseline** | Standard 3-equation NK model | Reference specification |
+| **Swiss Base** | Swiss calibration + habit formation + interest rate smoothing | Country-specific fit |
+| **Regime A** | Full extensions + positive-rate parameters (phi_pi=2.00) | Normal policy environment |
+| **Regime B** | Full extensions + negative-rate parameters (phi_pi=1.70) | Low/negative rate environment |
+| **Unstable** | Extreme ER leaning (phi_ds=1.5) | Determinacy boundary test |
+
+Swiss calibration: beta=0.995, sigma=1.32, openness=0.40 (Cuche-Curti et al., 2009). Extensions include habit persistence, price indexation, incomplete exchange rate pass-through, and exchange rate leaning in the Taylor rule.
+
+#### 2. Data
 
 | Dataset | Frequency | Period | Description |
 |---------|-----------|--------|-------------|
@@ -95,44 +234,35 @@ Two interest rate regimes are defined:
 - **Positive rate regime**: Before Dec 2014 and from Jun 2022 onward
 - **Negative rate regime**: Dec 2014 – Jun 2022
 
-#### 2. Shock Identification (`03_shock_identification.R`)
+#### 3. Shock Identification (`03_shock_identification.R`)
 
 Monetary policy shocks are identified via a **purging regression** that removes the predictable component of SNB rate decisions. Control variables are selected data-driven using **Random Forest variable importance** (Gini index), rather than imposed ad hoc. The residuals from this regression serve as the identified monetary policy shock series.
 
-#### 3. Event Studies (`04_event_studies.R`)
+#### 4. Event Studies (`04_event_studies.R`)
 
-Regression-based event studies estimate the EUR/CHF response in a **[-10, +10] day window** around each rate cut announcement, as well as a **[-6, +6] hour window** for recent events where intraday data is available. Each horizon is estimated separately with heteroskedasticity-robust (HC1) standard errors.
+Regression-based event studies estimate the EUR/CHF response in a **[-10, +10] day window** around each rate cut announcement, as well as a **[-6, +6] hour window** for recent events where intraday data is available.
 
-#### 4. Local Projections (`05_local_projections.R`)
+#### 5. Local Projections (`05_local_projections.R`)
 
-Following [Jordà (2005)](https://doi.org/10.1257/0002828053828518), impulse response functions are estimated for:
-- **EUR/CHF exchange rate** response (1–12 month horizons)
-- **CPI inflation** response (1–12 month horizons)
+Following [Jorda (2005)](https://doi.org/10.1257/0002828053828518), impulse response functions are estimated for EUR/CHF and CPI at horizons 1–12 months. Standard errors use Newey-West HAC estimators.
 
-Standard errors are computed using Newey-West HAC estimators with lag length equal to the projection horizon.
+#### 6. Regime Analysis (`06_regime_analysis.R`)
 
-#### 5. Regime Analysis (`06_regime_analysis.R`)
+The shock variable is interacted with regime indicators to estimate **separate impulse responses under positive and negative rate environments**. Wald tests formally test whether transmission differs across regimes.
 
-The shock variable is interacted with regime indicators to estimate **separate impulse responses under positive and negative rate environments**. A Wald test formally tests whether transmission differs across regimes at each horizon.
+#### 7. Machine Learning (`07_machine_learning.R`)
 
-#### 6. Machine Learning (`07_machine_learning.R`)
+A **Causal Forest** (Athey & Imbens, 2018) estimates conditional average treatment effects (CATEs), revealing heterogeneity in monetary policy transmission across macroeconomic states.
 
-A **Causal Forest** (Athey & Imbens, 2018) estimates conditional average treatment effects (CATEs), allowing the data to reveal heterogeneity in how monetary policy shocks transmit across different macroeconomic states and regimes.
+#### 8. Robustness (`08_robustness.R`)
 
-#### 7. Robustness (`08_robustness.R`)
-
-Three control specifications are compared:
-- No controls (baseline)
-- Lagged controls only (KOF, CPI)
-- Full data-driven controls (RF-selected)
-
-Regime-dependent results are also re-estimated under alternative specifications with Wald tests.
+Three control specifications are compared: no controls, lagged controls (KOF, CPI), and full RF-selected controls. Results are robust across specifications.
 
 ---
 
 ### Methodological Extensions
 
-Seven self-contained extensions complement the core analysis. They are located in `extensions/` and require the core pipeline to have run first (to generate the `.RData` files).
+Seven self-contained extensions complement the core analysis. They are located in `extensions/` and require the core pipeline to have run first.
 
 | # | Extension | Method | Key Output |
 |---|-----------|--------|------------|
@@ -148,68 +278,14 @@ A self-contained LaTeX companion document (`extensions/doc/extensions_paper.tex`
 
 ---
 
-### Key Output
-
-#### Figures
-
-| Figure | Description |
-|--------|-------------|
-| `policy_rate_timeline.pdf` | SNB policy rate history with rate changes and LIBOR range |
-| `key_variables_timeline.pdf` | CPI, KOF, EUR/CHF, VIX time series |
-| `variable_importance_selection.pdf` | Random Forest variable importance for control selection |
-| `daily_event_study.pdf` | EUR/CHF response [-10, +10] days around rate cuts |
-| `hourly_event_study.pdf` | EUR/CHF response [-6, +6] hours around rate cuts |
-| `daily_cumulative_response.pdf` | Cumulative EUR/CHF response post-announcement |
-| `irf_eur_chf.pdf` | Local projection IRF: EUR/CHF (1–12 months) |
-| `irf_cpi.pdf` | Local projection IRF: CPI inflation (1–12 months) |
-| `irf_eur_chf_regime.pdf` | EUR/CHF IRF by regime (positive vs negative rates) |
-| `irf_cpi_regime.pdf` | CPI IRF by regime (positive vs negative rates) |
-| `cate_by_regime.pdf` | Causal Forest treatment effect heterogeneity |
-| `prediction_comparison.pdf` | Out-of-sample prediction validation |
-
-#### Tables
-
-| Table | Description |
-|-------|-------------|
-| `summary_stats.tex` | Descriptive statistics (2000–2025) |
-| `purging_regression.tex` | Purging regression with data-driven controls |
-| `lp_fx.tex` / `lp_cpi.tex` | Local projection coefficients at key horizons |
-| `lp_fx_regime.tex` / `lp_cpi_regime.tex` | Regime-dependent IRF coefficients with Wald tests |
-| `robustness_fx.tex` / `robustness_cpi.tex` | Robustness across control specifications |
-
-#### Extension Figures (`extensions/output/figures/`)
-
-| Figure | Description |
-|--------|-------------|
-| `irf_hf_vs_baseline.pdf` | IV-LP vs OLS-LP impulse response comparison |
-| `transition_function.pdf` | Logistic transition function for different gamma values |
-| `irf_smooth_transition_fx.pdf` / `_cpi.pdf` | Smooth transition LP impulse responses by regime |
-| `irf_bootstrap_fx.pdf` / `_cpi.pdf` | Newey-West vs wild bootstrap confidence intervals |
-| `placebo_fx.pdf` / `_cpi.pdf` | Placebo and permutation test results |
-| `info_vs_mp_classification.pdf` | Shock classification scatter plot |
-| `irf_info_vs_mp_fx.pdf` / `_cpi.pdf` | Pure MP vs information shock IRFs |
-| `irf_all_outcomes.pdf` | Multi-panel IRFs across all transmission channels |
-| `irf_yield_2y.pdf` / `irf_yield_10y.pdf` / `irf_kof.pdf` | Individual outcome IRFs |
-| `irf_sign_asymmetry_fx.pdf` | Sign asymmetry: easing vs tightening |
-| `irf_size_asymmetry_fx.pdf` | Size asymmetry: large vs small shocks |
-
-#### Extension Tables (`extensions/output/tables/`)
-
-| Table | Description |
-|-------|-------------|
-| `hf_first_stage.tex` | First-stage IV diagnostics |
-| `irf_hf_comparison.tex` | IV-LP vs OLS-LP coefficient comparison |
-| `smooth_transition_results.tex` | Smooth transition LP results |
-| `bootstrap_comparison.tex` | Bootstrap vs Newey-West CI comparison |
-| `placebo_results.tex` | Placebo and permutation test p-values |
-| `info_effects_results.tex` | Information vs pure MP shock responses |
-| `additional_outcomes.tex` | Additional outcome variable IRFs |
-| `asymmetry_results.tex` | Sign and size asymmetry Wald tests |
-| `quantile_regression.tex` | Quantile regression at tau = {0.25, 0.50, 0.75} |
-
----
-
 ### How to Run
+
+**DSGE simulations** (requires MATLAB + Dynare):
+
+```matlab
+% In MATLAB, from Dynare/ folder:
+run('IRF_figures.m')
+```
 
 **Core pipeline** (8 scripts):
 
@@ -227,11 +303,12 @@ The core pipeline executes all 8 scripts sequentially. Intermediate `.RData` fil
 
 ### Requirements
 
+- **DSGE:** MATLAB (>= R2020a) with [Dynare](https://www.dynare.org/) (>= 5.0)
 - **R** (>= 4.0)
 - **Core packages:** tidyverse, ggplot2, lubridate, sandwich, lmtest, car, xtable, stargazer, ranger, grf, gridExtra, scales
 - **Extension packages:** ivreg, quantreg (installed automatically by `run_extensions.R` if missing)
 
-Install all dependencies:
+Install all R dependencies:
 
 ```r
 install.packages(c("tidyverse", "lubridate", "sandwich", "lmtest", "car",
